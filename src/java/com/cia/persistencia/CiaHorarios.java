@@ -23,6 +23,12 @@ public class CiaHorarios  implements java.io.Serializable {
     public CiaHorarios() {
     }
 
+    public CiaHorarios(BigDecimal horId) {
+        this.horId = horId;
+    }
+    
+    
+
 	
     public CiaHorarios(BigDecimal horId, BigDecimal horTipo, String horTiempo, BigDecimal horEstado) {
         this.horId = horId;
