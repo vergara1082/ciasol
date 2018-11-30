@@ -13,7 +13,10 @@ public class NewClass {
 
     public static void main(String[] args) {
         try {
-            new Conexion().conectar();
+            Conexion net = new Conexion();
+            net.conectar();
+            new Consultas().ConsultaPersonaPorDocumento(net.getCon(), "1082951997").getPerNombres();
+            System.out.println(new Consultas().ConsultaPersonaPorDocumento(net.getCon(), "1082951997").getPerNombres());
         } catch (Exception e) {
             e.printStackTrace();
         }
