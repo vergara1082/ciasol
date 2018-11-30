@@ -46,7 +46,7 @@ public class Conexion {
                 throw new IOException("Error! No se ha logrado cargar el driver especificado");
             }
             con = DriverManager.getConnection(url, user, password);
-            System.out.println("com.cia.db.Conexion.conectar()"+ con.getSchema());
+            con.setAutoCommit(false);
         }
     }
 

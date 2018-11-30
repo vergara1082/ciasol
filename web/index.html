@@ -6,27 +6,41 @@ and open the template in the editor.
 -->
 <html>
     <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="resources/css/bootstrap.min.css" type="text/css">
+        <link rel="stylesheet" href="resources/css/bootstrap-grid.min.css" type="text/css"/>
+        <link rel="stylesheet" href="resources/css/bootstrap-reboot.min.css" type="text/css">
+        <link href="resources/css/floating-label.css" rel="stylesheet" type="text/css"/>
         <title>Login</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="plantilla/bootstrap.min.css" rel="stylesheet" type="text/css"/>
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
     </head>
     <body>
-        <form id="frmLogin" method="POST">
+        <form class="form-signin" method="post" action="singIn">
             <div class="row">
-                <div class="col-md-3">
-                </div>
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label>Usuario:</label>
-                        <input type="text" class="form-control" id="txtUsu" />
+                <div class="container-fluid">
+                    <div class="text-center mb-4">
+                        <img class="mb-4" src="../../assets/brand/bootstrap-solid.svg" alt="" width="72" height="72">
+                        <h1 class="h3 mb-3 font-weight-normal">Cia Sol</h1>
+                        <p></p>
                     </div>
-                    <div class="form-group">
-                        <label>Contraseña:</label>
-                        <input type="password" class="form-control" id="txtPass" />
+
+                    <div class="form-label-group">
+                        <input type="text" id="inputUser" name="inputUser" class="form-control" placeholder="Usuario" required="" autofocus="">
+                        <label for="inputUser">Usuario</label>
                     </div>
+
+                    <div class="form-label-group">
+                        <input type="password" id="inputPassword" name="inputPassword" class="form-control" placeholder="Password" required="">
+                        <label for="inputPassword">Password</label>
+                    </div>
+
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+                    <p class="mt-5 mb-3 text-muted text-center">© Cia Sol 2018-2019</p>
                 </div>
+                
             </div>
+            <script src="resources/js/bootstrap.bundle.js" type="text/javascript"></script>
+            <script src="resources/js/bootstrap.bundle.js" type="text/javascript"></script>
         </form>
     </body>
 </html>

@@ -5,18 +5,19 @@
  */
 package com.cia.db;
 
+import Cifrado.Encriptar_md5;
 import com.cia.persistencia.CiaPersonas;
+import com.cia.persistencia.CiaUsuarios;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import org.jboss.logging.Logger;
-import org.postgresql.core.Query;
 
 /**
  *
- * @author jcarreno
+ * @author yo
  */
 public class Consultas {
 
@@ -55,6 +56,42 @@ public class Consultas {
             }
         }
         return null;
-    }
+    }//ConsultaPersonaDocumento
 
+    /*Consultar USuarios*/
+    public CiaUsuarios validarUsuario(Connection con, String user, String pass) throws Exception {
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        CiaUsuarios obj;
+        Encriptar_md5 en = new Encriptar_md5();
+        try {
+            pst = con.prepareStatement("Select * from cia_usuarios where us_nombre = ? and us_password = ?");
+            pst.setString(1, user.toUpperCase());
+            pst.setString(2, en.get_md5(pass));
+            rst = pst.executeQuery();
+            if (rst.next()) {
+                obj = new CiaUsuarios();
+                obj.setUsId(rst.getBigDecimal("us_id"));
+                obj.setUsNombre(rst.getString("us_nombre"));
+                obj.setUsPassword(rst.getString("us_password"));
+                obj.setUsEstado(rst.getBigDecimal("us_estado"));
+                obj.setCiaPersonas(new CiaPersonas(rst.getBigDecimal("per_id"), "", "", BigDecimal.ZERO, user, BigDecimal.ZERO));
+                obj.setUsFechaEstado(rst.getDate("us_fecha_estado"));
+                return obj;
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(Consultas.class.getName()).log(Logger.Level.FATAL, e);
+            throw new Exception("Error consultando El usuario");
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (rst != null) {
+                rst.close();
+            }
+        }
+        return null;
+    }
+    /* End Consultas Usuarios*/
 }
