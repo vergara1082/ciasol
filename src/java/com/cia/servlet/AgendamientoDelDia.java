@@ -10,21 +10,23 @@ import com.cia.db.Consultas;
 import com.cia.persistencia.CiaCursos;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author root
+ * @author emadrid
  */
-@WebServlet(name = "Asistencias", urlPatterns = {"/asistencias.php"})
-public class Asistencias extends HttpServlet {
+public class AgendamientoDelDia extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,13 +38,18 @@ public class Asistencias extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException, Exception {
-        Conexion conexion = new Conexion();
-        conexion.conectar();
-        Consultas consultas = new Consultas();
-        List<CiaCursos> listaDeCursos = consultas.allCurso(conexion.getCon());
-        request.setAttribute("listaCurso", listaDeCursos);
-        request.getRequestDispatcher("asistencia/asistencia.jsp").forward(request, response);
+            throws ServletException, IOException {
+        Conexion c = new Conexion();
+        List<CiaCursos> list = new ArrayList<>();
+        try {
+            String tipo = request.getParameter("selectHorario");
+            c.conectar();
+            Consultas consultas = new Consultas();
+            list = consultas.cursoPorHorario(c.getCon(), tipo);
+        } catch (Exception ex) {
+            Logger.getLogger(AgendamientoDelDia.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -57,11 +64,7 @@ public class Asistencias extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (Exception ex) {
-            Logger.getLogger(Asistencias.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**
@@ -75,11 +78,7 @@ public class Asistencias extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            processRequest(request, response);
-        } catch (Exception ex) {
-            Logger.getLogger(Asistencias.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        processRequest(request, response);
     }
 
     /**

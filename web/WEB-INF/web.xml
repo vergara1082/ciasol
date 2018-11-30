@@ -8,6 +8,17 @@
         <servlet-name>SingIn</servlet-name>
         <url-pattern>/singIn</url-pattern>
     </servlet-mapping>
+    
+    <servlet>
+        <servlet-name>AgendamientoDelDia</servlet-name>
+        <servlet-class>com.cia.servlet.AgendamientoDelDia</servlet-class>
+    </servlet>
+    
+    <servlet-mapping>
+        <servlet-name>AgendamientoDelDia</servlet-name>
+        <url-pattern>/AgendamientoDelDia</url-pattern>
+    </servlet-mapping>
+    
     <session-config>
         <session-timeout>
             30
