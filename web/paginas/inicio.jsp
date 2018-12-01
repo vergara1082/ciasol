@@ -20,7 +20,7 @@
         <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
 
         <!-- Custom styles for this template -->
-        <link href="sticky-footer-navbar.css" rel="stylesheet">
+        <link href="<%=request.getContextPath()%>/resources/css/stiker-label.css" rel="stylesheet">
     </head>
     <body>
 
@@ -38,10 +38,13 @@
                             <a class="nav-link" href="<%=request.getContextPath()%>/singIn">Home <span class="sr-only">(current)</span></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#">Link</a>
+                            <a class="nav-link" href="<%=request.getContextPath()%>/asingInf">Asignar Curso</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link disabled" href="#">Disabled</a>
+                            <a class="nav-link" href="<%=request.getContextPath()%>/paginas/agendamientoDelDia.jsp">Agendar Curso</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<%=request.getContextPath()%>/asistencia/asistencia.jsp">Registrar Asistencia</a>
                         </li>
                     </ul>
                     <form class="form-inline mt-2 mt-md-0">
@@ -54,9 +57,8 @@
 
         <!-- Begin page content -->
         <main role="main" class="container">
-            <h1 class="mt-5">Sticky footer with fixed navbar</h1>
-            <p class="lead">Pin a fixed-height footer to the bottom of the viewport in desktop browsers with this custom HTML and CSS. A fixed navbar has been added with <code>padding-top: 60px;</code> on the <code>body &gt; .container</code>.</p>
-            <p>Back to <a href="../sticky-footer">the default sticky footer</a> minus the navbar.</p>
+
+
         </main>
 
         <footer class="footer">

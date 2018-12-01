@@ -9,6 +9,7 @@ import Cifrado.Encriptar_md5;
 import com.cia.persistencia.CiaCursos;
 import com.cia.persistencia.CiaDetalleCursos;
 import com.cia.persistencia.CiaHorarios;
+import com.cia.persistencia.CiaInfracciones;
 import com.cia.persistencia.CiaPersonas;
 import com.cia.persistencia.CiaUsuarios;
 import java.io.IOException;
@@ -18,8 +19,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.sql.Date;
-import java.sql.Time;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +30,7 @@ import org.jboss.logging.Logger;
  */
 public class Consultas {
 
-    public CiaPersonas ConsultaPersonaPorDocumento(Connection con, String documento) throws Exception {
+    public CiaPersonas ConsultaPersonaPorDocumento(Connection con, String documento,BigDecimal tp) throws Exception {
         PreparedStatement pst = null;
         ResultSet rst = null;
         CiaPersonas per;
@@ -177,18 +176,61 @@ public class Consultas {
 
     }
 
-    public List cursoPorHorario(Connection c, String tipo) throws Exception {
+    /*Cur get*/
+    public CiaCursos consultaCursoPorHorario(Connection con, BigDecimal id) throws Exception {
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        CiaCursos cursos;
+        try {
+
+            pst = con.prepareStatement("Select \n"
+                    + "*\n"
+                    + "from cia_cursos\n"
+                    + "Where \n"
+                    + "to_char(cur_fecha,'dd/MM/yyyy') = to_char(current_date,'dd/MM/yyyy')\n"
+                    + "and cur_estado = 1\n"
+                    + "and hor_id=?");
+            pst.setBigDecimal(1, id);
+            rst = pst.executeQuery();
+            if (rst.next()) {
+                cursos = new CiaCursos();
+                cursos.setCurId(rst.getBigDecimal("cur_id"));
+                CiaHorarios ciaHorarios = getHorarioByid(con, rst.getBigDecimal("hor_id"));
+                cursos.setCiaHorarios(ciaHorarios);
+                cursos.setCiaPersonas(new CiaPersonas());
+                cursos.setCurFecha(rst.getDate("cur_fecha"));
+                cursos.setCurEstado(rst.getBigDecimal("cur_estado"));
+                cursos.setCurFechaEstado(rst.getDate("cur_fecha_estado"));
+                return cursos;
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(Consultas.class.getName()).log(Logger.Level.FATAL, e);
+            throw new Exception("Error consultando la persona por Documento");
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (rst != null) {
+                rst.close();
+            }
+        }
+        return null;
+
+    }
+
+    /*cur get*/
+    public List cursoPorHorario(Connection c, int tipo) throws Exception {
         PreparedStatement pst = null;
         ResultSet rst = null;
         CiaCursos ciaCursos = null;
         List<CiaCursos> listaCurso = new ArrayList<>();
         try {
-            pst = c.prepareStatement("SELECT cur.* FROM cia_cursos cur \n"
-                    + "INNER JOIN cia_horarios hor ON hor.hor_id = cur.hor_id\n"
-                    + "INNER JOIN cia_detalle_cursos detcur ON detcur.cur_id = cur.cur_id\n"
-                    + "INNER JOIN cia_infracciones inf ON inf.inf_id = detcur.inf_id\n"
-                    + "INNER JOIN cia_personas per ON per.per_id = inf.per_id\n"
-                    + "WHERE hor.hor_tipo = ?");
+            pst = c.prepareStatement("SELECT * FROM cia_cursos cur "
+                    + "INNER JOIN cia_horarios hor ON hor.hor_id = cur.hor_id "
+                    + "INNER JOIN cia_detalle_cursos detcur ON detcur.cur_id = cur.cur_id "
+                    + "INNER JOIN cia_infracciones inf ON inf.inf_id = detcur.inf_id  "
+                    + "INNER JOIN cia_personas per ON per.per_id = inf.per_id WHERE hor.hor_tipo = ?");
 
             pst.setString(1, tipo);
             rst = pst.executeQuery();
@@ -198,7 +240,7 @@ public class Consultas {
                 ciaCursos.setCurFecha(rst.getDate("cur_fecha"));
                 ciaCursos.setCurEstado(rst.getBigDecimal("cur_estado"));
                 ciaCursos.setCiaHorarios(new CiaHorarios(rst.getBigDecimal("hor_id")));
-                ciaCursos.setCiaPersonas(new CiaPersonas());
+                ciaCursos.setCiaPersonas(new CiaPersonas(rst.getBigDecimal("per_id"), rst.getString("per_nombres"), rst.getString("per_apellidos"), rst.getBigDecimal("per_tp_documento"), rst.getString("per_documento"), rst.getBigDecimal("per_estado")));
                 ciaCursos.setCurFechaEstado(rst.getDate("cur_fecha_estado"));
                 listaCurso.add(ciaCursos);
             }
@@ -213,6 +255,37 @@ public class Consultas {
             }
         }
         return listaCurso;
+    }
+
+    public CiaInfracciones infraccionesByPer(Connection c, int per_id) throws Exception {
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        CiaInfracciones ci = new CiaInfracciones();
+        try {
+            pst = c.prepareStatement("SELECT * FROM CIA_INFRACCIONES WHERE PER_ID =?");
+            pst.setInt(1, per_id);
+            rst = pst.executeQuery();
+            if (rst.next()) {
+                ci = new CiaInfracciones();
+                ci.setCiaPersonas(new CiaPersonas(rst.getBigDecimal("per_id")));
+                ci.setInfNumero(rst.getString("inf_numero"));
+                ci.setInfId(rst.getBigDecimal("inf_id"));
+                ci.setInfFecha(rst.getDate("inf_fecha"));
+                ci.setInfCodigo(rst.getString("inf_codigo"));
+                ci.setInfFactura(rst.getString("inf_factura"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Error al consultar persona.");
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (rst != null) {
+                rst.close();
+            }
+        }
+        return ci;
     }
 
     public static void main(String[] args) throws IOException, Exception {

@@ -5,8 +5,6 @@
  */
 package com.cia.servlet;
 
-import Cifrado.Encriptar_md5;
-import Cifrado.KeyStore;
 import com.cia.db.Conexion;
 import com.cia.db.Consultas;
 import com.cia.persistencia.CiaUsuarios;
@@ -39,15 +37,6 @@ public class SingIn extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
 
-            if (request.getSession().getAttribute("user") != null) {
-                if (request.getSession().getAttribute("conexion") != null) {
-                    Conexion con = (Conexion) request.getSession().getAttribute("conexion");
-                    if (con.testConexion()) {
-                        request.getRequestDispatcher("paginas/inicio.jsp").forward(request, response);
-                    }
-                    request.getRequestDispatcher(request.getContextPath()).forward(request, response);
-                }
-            }
             Conexion con = new Conexion();
             Consultas consultas = new Consultas();
             request.getSession().setAttribute("conexion", con);
@@ -57,14 +46,6 @@ public class SingIn extends HttpServlet {
                     Logger.getLogger(SingIn.class.getName()).log(Level.SEVERE, null, "No hay Conexión");
                     return;
                 }
-                if (request.getParameter("inputUser") == null) {
-                    request.getRequestDispatcher(request.getContextPath()).forward(request, response);
-                }
-
-                if (request.getParameter("inputPassword") == null) {
-                    request.getRequestDispatcher(request.getContextPath()).forward(request, response);
-                }
-
                 String user = request.getParameter("inputUser");
                 String pass = request.getParameter("inputPassword");
 
@@ -86,7 +67,16 @@ public class SingIn extends HttpServlet {
                 request.getRequestDispatcher("paginas/inicio.jsp").forward(request, response);
 
             } catch (Exception ex) {
-                Logger.getLogger(SingIn.class.getName()).log(Level.SEVERE, null, ex);
+                if (request.getSession().getAttribute("user") != null) {
+                    if (request.getSession().getAttribute("conexion") != null) {
+                        con = (Conexion) request.getSession().getAttribute("conexion");
+                        if (con.testConexion()) {
+                            request.getRequestDispatcher("paginas/inicio.jsp").forward(request, response);
+                        }
+                        response.reset();
+                        request.getRequestDispatcher(request.getContextPath()).forward(request, response);
+                    }
+                }
             }
 
         }
