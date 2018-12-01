@@ -146,16 +146,18 @@ public class Inserciones {
 
         PreparedStatement pst = null;
         ResultSet key = null;
+        Conexion net = new Conexion();
+        net.conectar();
         try {
-            pst = con.prepareStatement("INSERT INTO public.cia_cursos(\n"
+            pst = net.getCon().prepareStatement("INSERT INTO public.cia_cursos(\n"
                     + "	cur_id, hor_id, cur_ins_id, cur_fecha, cur_estado, cur_fecha_estado)\n"
                     + "	VALUES (NEXTVAL('s_cursos'), ?, ?, ?, ?, ?)", new String[]{"cur_id"});
 
             pst.setBigDecimal(1, obj.getCiaHorarios().getHorId());
             pst.setBigDecimal(2, obj.getCiaPersonas().getPerId());
-            pst.setDate(4, new Date(Calendar.getInstance().getTime().getTime()));
-            pst.setBigDecimal(3, obj.getCurEstado());
-            pst.setDate(4, new Date(Calendar.getInstance().getTime().getTime()));
+            pst.setDate(3, new Date(Calendar.getInstance().getTime().getTime()));
+            pst.setBigDecimal(4, obj.getCurEstado());
+            pst.setDate(5, new Date(Calendar.getInstance().getTime().getTime()));
 
             pst.executeUpdate();
 
@@ -183,7 +185,7 @@ public class Inserciones {
         net.conectar();
         try {
             Inserciones in = new Inserciones();
-            CiaPersonas per = new CiaPersonas(null, "Arnol", "Mendoza", BigDecimal.ONE, "8814567", BigDecimal.ONE);
+            CiaPersonas per = new CiaPersonas(null, "Alex", "Xad", BigDecimal.ONE, "8810857", BigDecimal.ONE);
             per.setPerId(in.insertarPersona(net.getCon(), per));
             net.getCon().commit();
         } catch (Exception e) {

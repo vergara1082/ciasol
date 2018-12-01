@@ -13,18 +13,69 @@
         <meta name="description" content="">
         <meta name="author" content="">
         <link rel="icon" href="https://getbootstrap.com/favicon.ico">
-
+        <link href="<%=request.getContextPath()%>/resources/css/bootstrap-reboot.css" rel="stylesheet"/>
         <title>Cia Viral</title>
-
+        <script
+            src="https://code.jquery.com/jquery-3.3.1.js"
+            integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
         <!-- Bootstrap core CSS -->
         <link href="<%=request.getContextPath()%>/resources/css/bootstrap.min.css" rel="stylesheet">
-
+        <link href="<%=request.getContextPath()%>/resources/css/bootstrap-grid.min.css" rel="stylesheet">
+        <link href="<%=request.getContextPath()%>/resources/css/bootstrap-grid.min.css" rel="stylesheet">
         <!-- Custom styles for this template -->
-        <link href="<%=request.getContextPath()%>/resources/css/stiker-label.css" rel="stylesheet">
-        <link href="<%=request.getContextPath()%>/resources/css/offcanvas.css" rel="stylesheet">
-    </head>
-    <body class="bg-light">
+        <script type="text/javascript">
+            function guardar() {
+                var nombre = $('#txtNombres').val();
+                var Doc = $('#txtDocumento').val();
+                var tipDoc = $('#cmbTipoDocumento').val();
+                var Apellido = $('#txtApellidos').val();
+                var factura = $('#txtInfFactura').val();
+                var code = $('#txtInfCodigo').val();
+                var numero = $('#txtInfNumero').val();
+                var curso = $('#txtCurTipo').val();
+                if(tipDoc.value === 0  )){
+                    alert("Escoja tipo documento");
+                }
+                if(nombre.value === 0  )){
+                    alert("Digite nombre(s) de la persona");
+                }
 
+                $.post('<%=request.getContextPath()%>/addCurso', {
+                    txtNombres: nombre
+                    , txtDocumento: Doc
+                    , txtApellidos: Apellido
+                    , cmbTipoDocumento: tipDoc
+                    , txtInfFactura: factura
+                    , txtInfCodigo: code
+                    , txtInfNumero: numero
+                    , txtCurTipo: curso
+
+                }).success(function () {
+                    $("#res")
+                 };
+
+
+
+                /*     $.ajax({
+                 method: "POST",
+                 url: "/addCurso",
+                 data: {username: "username", password: "password"}
+                 })
+                 .success(function () {
+                 //do success stuff
+                 })
+                 .error(function () {
+                 console.log("error");
+                 });
+                 });*/
+
+
+            }
+        </script>
+
+    </head>
+    <body>
         <header>
             <!-- Fixed navbar -->
             <nav class="navbar navbar-expand-md navbar-dark
@@ -54,51 +105,63 @@
         </header>
 
         <!-- Begin page content -->
-        <div role="main" class="container">
+        <br/><br/><br/><br/>
+        <div class="container">
+            <div class="col-xs-4">
+                <label for ="cmbTipoDocumento">Tipo Documento</label>
+                <select id="cmbTipoDocumento" name="cmbTipoDocumento" class="form-control">
+                    <option value="0" selected=""> select tipo Documento </option>
+                    <option value="1" > Cedula</option>
+                    <option value="2" > Nit </option>
+                </select>
+            </div>
+            <div class="col-xs-4">
+                <input type="text" name="txtDocumento" id="txtDocumento" placeholder="Documento" class="form-control" />
+            </div>
+            <div class="col-xs-4">
+                <input type="text" name="txtNombres" id="txtNombres" placeholder="Nombres" class="form-control" />
+            </div>
             <br/>
-            <div class="row">
-                <div class="col-xs-2">
-                </div>
-                <div class="col-xs-8 rounded shadow-sm">
-                    <div class="row ">
-                        <div class="col-xs-4">
-                            <label for ="txtTipoDocumento">Tipo Documeot</label>
-                            <select id="txtDocumento" name="txtTipoDocumento" class="form-control">
-                                <option value="0" selected=""> select </option>
-                            </select>
-                        </div>
-                        <div class="col-xs-4">
-                            <input type="text" name="txtDocumento" id="txtDocumento" class="form-control" />
-                        </div>
-                        <div class="col-xs-4">
-                            <input type="text" name="txtDocumento" id="txtDocumento" class="form-control" />
-                        </div>
-                        <br/>
-                        <br/>
-                        <br/>
-                    </div>
-                </div>
+            <div class="col-xs-4">
+                <input type="text" name="txtApellidos" id="txtApellidos" placeholder="Apellidos" class="form-control" />
+            </div>
+            <div class="col-xs-4">
+                <input type="text" name="txtInfFactura" id="txtInfFactura" placeholder="Factura" class="form-control" />
+            </div>
+            <div class="col-xs-4">
+                <input type="text" name="txtInfCodigo" id="txtInfCodigo" placeholder="Codigo Infraccion" class="form-control" />
+            </div>
+            <div class="col-xs-4">
+                <input type="text" name="txtInfNumero" id="txtInfNumero" placeholder="Numero Comparendo" class="form-control" />
+            </div>
+            
+
+            <div class="col-xs-4">
+                <label for ="txtCurTipo">Tipo Documento</label>
+                <select id="txtCurTipo" name="txtCurTipo" class="form-control">
+                    <option value="1" selected=""> 08:00 - 09:30 </option>
+                    <option value="2" > 10:00 - 11:30</option>
+                    <option value="3" > 01:30 - 03:00 </option>
+                </select>
+            </div>
+            <div class="col-xs-4">
+                <input type="button" onclick="guardar()" id="Guardar" value="Guardar" name="Guardar" />
             </div>
         </div>
-        <div class="col-xs-2">
+        <div id="res">
+            
         </div>
-    </div>
 
 
-    <footer class="footer">
-        <div class="container">
-            <span class="text-muted">Place sticky footer content here.</span>
-        </div>
-    </footer>
+        <footer class="footer">
+            <div class="container">
+                <span class="text-muted">Place sticky footer content here.</span>
+            </div>
+        </footer>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
-    <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-    <script src="../../assets/js/vendor/popper.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
 
-
-</body>
+    </body>
 </html>

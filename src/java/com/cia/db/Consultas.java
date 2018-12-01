@@ -27,7 +27,7 @@ import org.jboss.logging.Logger;
  */
 public class Consultas {
 
-    public CiaPersonas ConsultaPersonaPorDocumento(Connection con, String documento) throws Exception {
+    public CiaPersonas ConsultaPersonaPorDocumento(Connection con, String documento,BigDecimal tp) throws Exception {
         PreparedStatement pst = null;
         ResultSet rst = null;
         CiaPersonas per;
@@ -173,6 +173,50 @@ public class Consultas {
 
     }
 
+    /*Cur get*/
+    public CiaCursos consultaCursoPorHorario(Connection con, BigDecimal id) throws Exception {
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        CiaCursos cursos;
+        try {
+
+            pst = con.prepareStatement("Select \n"
+                    + "*\n"
+                    + "from cia_cursos\n"
+                    + "Where \n"
+                    + "to_char(cur_fecha,'dd/MM/yyyy') = to_char(current_date,'dd/MM/yyyy')\n"
+                    + "and cur_estado = 1\n"
+                    + "and hor_id=?");
+            pst.setBigDecimal(1, id);
+            rst = pst.executeQuery();
+            if (rst.next()) {
+                cursos = new CiaCursos();
+                cursos.setCurId(rst.getBigDecimal("cur_id"));
+                CiaHorarios ciaHorarios = getHorarioByid(con, rst.getBigDecimal("hor_id"));
+                cursos.setCiaHorarios(ciaHorarios);
+                cursos.setCiaPersonas(new CiaPersonas());
+                cursos.setCurFecha(rst.getDate("cur_fecha"));
+                cursos.setCurEstado(rst.getBigDecimal("cur_estado"));
+                cursos.setCurFechaEstado(rst.getDate("cur_fecha_estado"));
+                return cursos;
+            }
+
+        } catch (SQLException e) {
+            Logger.getLogger(Consultas.class.getName()).log(Logger.Level.FATAL, e);
+            throw new Exception("Error consultando la persona por Documento");
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (rst != null) {
+                rst.close();
+            }
+        }
+        return null;
+
+    }
+
+    /*cur get*/
     public List cursoPorHorario(Connection c, int tipo) throws Exception {
         PreparedStatement pst = null;
         ResultSet rst = null;

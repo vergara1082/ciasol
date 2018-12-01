@@ -30,7 +30,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>agregarInfractorCurso</servlet-name>
-        <url-pattern>/addInfracCurso</url-pattern>
+        <url-pattern>/addCurso</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

@@ -41,7 +41,10 @@
                             <a class="nav-link" href="<%=request.getContextPath()%>/asingInf">Asignar Curso</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link disabled" href="#">Disabled</a>
+                            <a class="nav-link" href="<%=request.getContextPath()%>/paginas/agendamientoDelDia.jsp">Agendar Curso</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<%=request.getContextPath()%>/asistencia/asistencia.jsp">Registrar Asistencia</a>
                         </li>
                     </ul>
                     <form class="form-inline mt-2 mt-md-0">

@@ -6,10 +6,19 @@
 package com.cia.servlet;
 
 import com.cia.db.Conexion;
+import com.cia.db.Consultas;
+import com.cia.db.Inserciones;
+import com.cia.persistencia.CiaCursos;
+import com.cia.persistencia.CiaDetalleCursos;
+import com.cia.persistencia.CiaInfracciones;
 import com.cia.persistencia.CiaPersonas;
+import com.cia.persistencia.CiaUsuarios;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -31,24 +40,82 @@ public class agregarInfractorCurso extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws ServletException, IOException, Exception {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             Conexion con;
-            if (request.getSession().getAttribute("user") != null) {
-                if (request.getSession().getAttribute("conexion") != null) {
-                    con = (Conexion) request.getSession().getAttribute("conexion");
-                    if (con.testConexion()) {
-                        String documento = request.getParameter("txtDocumento");
-                        String nombres = request.getParameter("txtDocumento");
-                        String apellidos = request.getParameter("txtDocumento");
-                        String tipoDocumento = request.getParameter("cmbTipoDocumento");
-                        String telefono = request.getParameter("txtTelefono");
-                        CiaPersonas cp = new CiaPersonas(null, nombres, apellidos, BigDecimal.valueOf(Long.valueOf(tipoDocumento)), documento, BigDecimal.ONE);
+            try {
+                if (request.getSession().getAttribute("user") != null) {
+                    if (request.getSession().getAttribute("conexion") != null) {
+                        con = (Conexion) request.getSession().getAttribute("conexion");
+                        if (con.testConexion()) {
+                            try {
 
+                                String documento = request.getParameter("txtDocumento");
+                                String nombres = request.getParameter("txtNombres");
+                                String apellidos = request.getParameter("txtApellidos");
+                                String tipoDocumento = request.getParameter("cmbTipoDocumento");
+                                Consultas consultas = new Consultas();
+                                Inserciones in = new Inserciones();
+
+                                CiaPersonas cp = consultas.ConsultaPersonaPorDocumento(con.getCon(), documento, new BigDecimal(tipoDocumento));
+
+                                if (cp == null) {
+                                    cp = new CiaPersonas(null, nombres, apellidos, BigDecimal.valueOf(Long.valueOf(tipoDocumento)), documento, BigDecimal.ONE);
+
+                                    BigDecimal perId = in.insertarPersona(con.getCon(), cp);
+                                    cp.setPerId(perId);
+                                    if (perId.intValue() == 0) {
+                                        response.setStatus(500);
+                                        con.getCon().rollback();
+                                        return;
+                                    }
+                                }
+
+                                CiaInfracciones inf = new CiaInfracciones(null, cp, new CiaUsuarios(BigDecimal.ONE, cp, "", "", null),
+                                        request.getParameter("txtInfCodigo"),
+                                        request.getParameter("txtInfFactura"), BigDecimal.ONE);
+                                inf.setInfNumero(request.getParameter("txtInfNumero"));
+                                inf.setInfFecha(new Date());
+                                inf.setInfId(in.insertarInfraccion(con.getCon(), inf));
+                                if (inf.getInfId().intValue() == 0) {
+                                    response.setStatus(500);
+                                    con.getCon().rollback();
+                                    return;
+                                }
+
+                                CiaCursos cur = consultas.consultaCursoPorHorario(con.getCon(), new BigDecimal(request.getParameter("txtCurTipo")));
+                                if (cur == null) {
+                                    cur.setCiaHorarios(consultas.getHorarioByid(con.getCon(), new BigDecimal(request.getParameter("txtCurTipo"))));
+                                    cur.setCiaPersonas(cp);
+                                    cur.setCurEstado(BigDecimal.ONE);
+                                    cur.setCurFecha(new Date());
+                                    cur.setCurFechaEstado(new Date());
+                                    cur.setCurId(in.insertarCurso(con.getCon(), cur));
+                                }
+
+                                CiaDetalleCursos detcur = new CiaDetalleCursos(null, cur, inf, BigDecimal.ONE, new Date());
+
+                                detcur.setDcrId(in.insertarDetCurso(con.getCon(), detcur));
+
+                                if (detcur.getDcrId().intValue() == 0) {
+                                    response.setStatus(500);
+                                    con.getCon().rollback();
+                                    return;
+                                }
+                                con.getCon().commit();
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                con.getCon().rollback();
+                            }
+                        }
+
+                        request.getRequestDispatcher("/asingInf").forward(request, response);
                     }
-                    request.getRequestDispatcher(request.getContextPath()).forward(request, response);
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }
@@ -65,7 +132,11 @@ public class agregarInfractorCurso extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(agregarInfractorCurso.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
@@ -79,7 +150,11 @@ public class agregarInfractorCurso extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            processRequest(request, response);
+        } catch (Exception ex) {
+            Logger.getLogger(agregarInfractorCurso.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**
