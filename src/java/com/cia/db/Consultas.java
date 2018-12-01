@@ -8,6 +8,7 @@ package com.cia.db;
 import Cifrado.Encriptar_md5;
 import com.cia.persistencia.CiaCursos;
 import com.cia.persistencia.CiaHorarios;
+import com.cia.persistencia.CiaInfracciones;
 import com.cia.persistencia.CiaPersonas;
 import com.cia.persistencia.CiaUsuarios;
 import java.io.IOException;
@@ -175,13 +176,17 @@ public class Consultas {
 
     }
 
-    public List cursoPorHorario(Connection c, int tipo) throws Exception {
+    public List<CiaCursos> cursoPorHorario(Connection c, int tipo) throws Exception {
         PreparedStatement pst = null;
         ResultSet rst = null;
         CiaCursos ciaCursos = null;
         List<CiaCursos> listaCurso = new ArrayList<>();
         try {
-            pst = c.prepareStatement("SELECT cur.* FROM cia_cursos cur INNER JOIN cia_horarios hor ON hor.hor_id = cur.hor_id INNER JOIN cia_detalle_cursos detcur ON detcur.cur_id = cur.cur_id INNER JOIN cia_infracciones inf ON inf.inf_id = detcur.inf_id  INNER JOIN cia_personas per ON per.per_id = inf.per_id WHERE hor.hor_tipo = ?");
+            pst = c.prepareStatement("SELECT * FROM cia_cursos cur "
+                    + "INNER JOIN cia_horarios hor ON hor.hor_id = cur.hor_id "
+                    + "INNER JOIN cia_detalle_cursos detcur ON detcur.cur_id = cur.cur_id "
+                    + "INNER JOIN cia_infracciones inf ON inf.inf_id = detcur.inf_id  "
+                    + "INNER JOIN cia_personas per ON per.per_id = inf.per_id WHERE hor.hor_tipo = ?");
 
             pst.setInt(1, tipo);
             rst = pst.executeQuery();
@@ -191,7 +196,7 @@ public class Consultas {
                 ciaCursos.setCurFecha(rst.getDate("cur_fecha"));
                 ciaCursos.setCurEstado(rst.getBigDecimal("cur_estado"));
                 ciaCursos.setCiaHorarios(new CiaHorarios(rst.getBigDecimal("hor_id")));
-                ciaCursos.setCiaPersonas(new CiaPersonas());
+                ciaCursos.setCiaPersonas(new CiaPersonas(rst.getBigDecimal("per_id"), rst.getString("per_nombres"), rst.getString("per_apellidos"), rst.getBigDecimal("per_tp_documento"), rst.getString("per_documento"), rst.getBigDecimal("per_estado")));
                 ciaCursos.setCurFechaEstado(rst.getDate("cur_fecha_estado"));
                 listaCurso.add(ciaCursos);
             }
@@ -206,6 +211,37 @@ public class Consultas {
             }
         }
         return listaCurso;
+    }
+
+    public CiaInfracciones infraccionesByPer(Connection c, int per_id) throws Exception {
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        CiaInfracciones ci = new CiaInfracciones();
+        try {
+            pst = c.prepareStatement("SELECT * FROM CIA_INFRACCIONES WHERE PER_ID =?");
+            pst.setInt(1, per_id);
+            rst = pst.executeQuery();
+            if (rst.next()) {
+                ci = new CiaInfracciones();
+                ci.setCiaPersonas(new CiaPersonas(rst.getBigDecimal("per_id")));
+                ci.setInfNumero(rst.getString("inf_numero"));
+                ci.setInfId(rst.getBigDecimal("inf_id"));
+                ci.setInfFecha(rst.getDate("inf_fecha"));
+                ci.setInfCodigo(rst.getString("inf_codigo"));
+                ci.setInfFactura(rst.getString("inf_factura"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Error al consultar persona.");
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (rst != null) {
+                rst.close();
+            }
+        }
+        return ci;
     }
 
     public static void main(String[] args) throws IOException, Exception {
