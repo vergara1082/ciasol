@@ -10,10 +10,7 @@ import com.cia.db.Consultas;
 import com.cia.persistencia.CiaCursos;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,13 +36,31 @@ public class AgendamientoDelDia extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        response.setContentType("text/html; charset=iso-8859-1");
+        PrintWriter out = response.getWriter();
         Conexion c = new Conexion();
         List<CiaCursos> list = new ArrayList<>();
         try {
             String tipo = request.getParameter("selectHorario");
             c.conectar();
             Consultas consultas = new Consultas();
-            list = consultas.cursoPorHorario(c.getCon(), tipo);
+            list = consultas.cursoPorHorario(c.getCon(), Integer.valueOf(tipo));
+
+            out.println("<table>");
+            out.println("<tr>");
+            out.println("<td > NOMBRE </td>");
+            out.println("<td>APELLIDO</td>");
+            out.println("<td >EDAD</td>");
+            out.println("</tr>");
+            for (int i = 0; i < list.size(); i++) {
+                List<CiaCursos> persona = (List<CiaCursos>) list.get(i);
+                out.println("<tr>");
+                out.println("<td>" + persona.get(i).getCurFecha() + "</td>");
+                out.println("<td >" + persona.get(i).getCurEstado() + "</td>");
+                out.println("<td>" + persona.get(i).getCurId() + "</td>");
+                out.println("</tr>");
+            }
+            out.println("</table>");
         } catch (Exception ex) {
             Logger.getLogger(AgendamientoDelDia.class.getName()).log(Level.SEVERE, null, ex);
         }

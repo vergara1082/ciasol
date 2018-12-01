@@ -101,6 +101,7 @@ public class Consultas {
         }
         return null;
     }
+
     /* End Consultas Usuarios*/
     public List<CiaCursos> allCurso(Connection con) throws Exception {
         PreparedStatement pst = null;
@@ -174,20 +175,15 @@ public class Consultas {
 
     }
 
-    public List cursoPorHorario(Connection c, String tipo) throws Exception {
+    public List cursoPorHorario(Connection c, int tipo) throws Exception {
         PreparedStatement pst = null;
         ResultSet rst = null;
         CiaCursos ciaCursos = null;
         List<CiaCursos> listaCurso = new ArrayList<>();
         try {
-            pst = c.prepareStatement("SELECT cur.* FROM cia_cursos cur \n"
-                    + "INNER JOIN cia_horarios hor ON hor.hor_id = cur.hor_id\n"
-                    + "INNER JOIN cia_detalle_cursos detcur ON detcur.cur_id = cur.cur_id\n"
-                    + "INNER JOIN cia_infracciones inf ON inf.inf_id = detcur.inf_id\n"
-                    + "INNER JOIN cia_personas per ON per.per_id = inf.per_id\n"
-                    + "WHERE hor.hor_tipo = ?");
+            pst = c.prepareStatement("SELECT cur.* FROM cia_cursos cur INNER JOIN cia_horarios hor ON hor.hor_id = cur.hor_id INNER JOIN cia_detalle_cursos detcur ON detcur.cur_id = cur.cur_id INNER JOIN cia_infracciones inf ON inf.inf_id = detcur.inf_id  INNER JOIN cia_personas per ON per.per_id = inf.per_id WHERE hor.hor_tipo = ?");
 
-            pst.setString(1, tipo);
+            pst.setInt(1, tipo);
             rst = pst.executeQuery();
             while (rst.next()) {
                 ciaCursos = new CiaCursos();
