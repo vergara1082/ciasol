@@ -50,9 +50,9 @@
         <br/>
         <h3>Consultar Curso del Día</h3>
         <form id="agendamiento" action="javascript:consultar()">
+            <h3>Consultar Curso del Día</h3>
             <div class="row">
                 <div class="col-md-2"></div>
-                <input type="hidden" value="<%=request.getContextPath()%>" id="tst"/>
                 <div class="col-md-2">
                     <div class="form-group">
                         <label>Seleccione un curso.</label>
@@ -65,10 +65,16 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <input id="submit" type="submit" value="Consultar" class="btn btn-outline-success" />
+                    <label>&nbsp;</label>
+                    <input id="submit" type="submit" value="Consultar" class="btn btn-outline-success form-control" />
                 </div>
             </div>
-            <div id="tabla">
+            <div class="col-md-12">
+                <div class="container">
+                    <div id="tabla">
+
+                    </div>
+                </div>
             </div>
         </form>
     </body>
