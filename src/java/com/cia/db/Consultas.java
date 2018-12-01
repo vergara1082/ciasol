@@ -7,6 +7,7 @@ package com.cia.db;
 
 import Cifrado.Encriptar_md5;
 import com.cia.persistencia.CiaCursos;
+import com.cia.persistencia.CiaDetalleCursos;
 import com.cia.persistencia.CiaHorarios;
 import com.cia.persistencia.CiaPersonas;
 import com.cia.persistencia.CiaUsuarios;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.sql.Date;
 import java.sql.Time;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import org.jboss.logging.Logger;
 
@@ -175,15 +177,20 @@ public class Consultas {
 
     }
 
-    public List cursoPorHorario(Connection c, int tipo) throws Exception {
+    public List cursoPorHorario(Connection c, String tipo) throws Exception {
         PreparedStatement pst = null;
         ResultSet rst = null;
         CiaCursos ciaCursos = null;
         List<CiaCursos> listaCurso = new ArrayList<>();
         try {
-            pst = c.prepareStatement("SELECT cur.* FROM cia_cursos cur INNER JOIN cia_horarios hor ON hor.hor_id = cur.hor_id INNER JOIN cia_detalle_cursos detcur ON detcur.cur_id = cur.cur_id INNER JOIN cia_infracciones inf ON inf.inf_id = detcur.inf_id  INNER JOIN cia_personas per ON per.per_id = inf.per_id WHERE hor.hor_tipo = ?");
+            pst = c.prepareStatement("SELECT cur.* FROM cia_cursos cur \n"
+                    + "INNER JOIN cia_horarios hor ON hor.hor_id = cur.hor_id\n"
+                    + "INNER JOIN cia_detalle_cursos detcur ON detcur.cur_id = cur.cur_id\n"
+                    + "INNER JOIN cia_infracciones inf ON inf.inf_id = detcur.inf_id\n"
+                    + "INNER JOIN cia_personas per ON per.per_id = inf.per_id\n"
+                    + "WHERE hor.hor_tipo = ?");
 
-            pst.setInt(1, tipo);
+            pst.setString(1, tipo);
             rst = pst.executeQuery();
             while (rst.next()) {
                 ciaCursos = new CiaCursos();
@@ -214,6 +221,89 @@ public class Consultas {
         List<CiaCursos> listCursos = new Consultas().allCurso(net.getCon());
         for (CiaCursos listCurso : listCursos) {
             System.out.println(listCurso.getCurId());
+        }
+    }
+
+    public List<HashMap> getlistDetalleCursoByCurso(Connection conexion, long idCurso) throws Exception {
+
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        try {
+
+            pst = conexion.prepareStatement("Select * from cia_detalle_cursos where cur_id = ? and dcr_estado = ?");
+            pst.setLong(1, idCurso);
+            pst.setLong(2, 1);
+            rst = pst.executeQuery();
+            List<HashMap> listDetalleCursos = new ArrayList<>();
+            List<HashMap> listaDetallesCursosId = new ArrayList<>();
+            while (rst.next()) {
+                HashMap hashMap = new HashMap();
+                hashMap.put("dcr_id", rst.getString("dcr_id"));
+                listaDetallesCursosId.add(hashMap);
+            }
+
+            List<CiaPersonas> ciaPersonas = getDataPersonByDetailsCourses(conexion, idCurso);
+            int i = 0;
+            for (CiaPersonas ciaPersona : ciaPersonas) {
+                HashMap hashMap = new HashMap();
+                hashMap.put("dcr_id", listaDetallesCursosId.get(i).get("dcr_id"));
+                hashMap.put("per_nombres", ciaPersona.getPerNombres());
+                hashMap.put("per_apellidos", ciaPersona.getPerApellidos());
+                hashMap.put("per_documetos", ciaPersona.getPerDocumento());
+                i++;
+                listDetalleCursos.add(hashMap);
+
+            }
+
+            return listDetalleCursos;
+
+        } catch (SQLException e) {
+            Logger.getLogger(Consultas.class.getName()).log(Logger.Level.FATAL, e);
+            throw new Exception("Error consultando la persona por Documento");
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (rst != null) {
+                rst.close();
+            }
+        }
+    }
+
+    public List<CiaPersonas> getDataPersonByDetailsCourses(Connection con, long id_detalle) throws Exception {
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        try {
+
+            pst = con.prepareStatement("SELECT \n"
+                    + "cia_personas.per_nombres, cia_personas.per_apellidos, cia_personas.per_documento\n"
+                    + " FROM cia_detalle_cursos \n"
+                    + "inner join cia_infracciones on cia_detalle_cursos.inf_id = cia_infracciones.inf_id \n"
+                    + "inner join cia_personas on cia_infracciones.per_id = cia_personas.per_id \n"
+                    + "where cia_detalle_cursos.cur_id= ?");
+            pst.setLong(1, id_detalle);
+            rst = pst.executeQuery();
+            List<CiaPersonas> listCiaPersonase = new ArrayList<>();
+            while (rst.next()) {
+                CiaPersonas civPersonas = new CiaPersonas();
+                civPersonas.setPerDocumento(rst.getString("per_documento"));
+                civPersonas.setPerNombres(rst.getString("per_nombres"));
+                civPersonas.setPerApellidos(rst.getString("per_apellidos"));
+                listCiaPersonase.add(civPersonas);
+            }
+
+            return listCiaPersonase;
+
+        } catch (SQLException e) {
+            Logger.getLogger(Consultas.class.getName()).log(Logger.Level.FATAL, e);
+            throw new Exception("Error consultando la persona por Documento");
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (rst != null) {
+                rst.close();
+            }
         }
     }
 

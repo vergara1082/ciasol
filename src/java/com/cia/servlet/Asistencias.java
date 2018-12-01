@@ -8,22 +8,44 @@ package com.cia.servlet;
 import com.cia.db.Conexion;
 import com.cia.db.Consultas;
 import com.cia.persistencia.CiaCursos;
+import com.cia.utils.Cifrado.Reportes;
+import java.io.BufferedOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+import net.sf.jasperreports.export.ExporterInputItem;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleExporterInputItem;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import static org.apache.jasper.Constants.DEFAULT_BUFFER_SIZE;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  *
  * @author root
  */
-@WebServlet(name = "Asistencias", urlPatterns = {"/asistencias.php"})
+@WebServlet(name = "Asistencias", urlPatterns = {"/asistencias"})
 public class Asistencias extends HttpServlet {
 
     /**
@@ -37,12 +59,112 @@ public class Asistencias extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, Exception {
+        if (request.getParameter("action") == null) {
+            Conexion conexion = new Conexion();
+            conexion.conectar();
+            Consultas consultas = new Consultas();
+            List<CiaCursos> listaDeCursos = consultas.allCurso(conexion.getCon());
+            request.setAttribute("listaCurso", listaDeCursos);
+            request.getRequestDispatcher("asistencia/asistencia.jsp").forward(request, response);
+        } else if (request.getParameter("action").equals("consultarPersonasCursos")) {
+            consultarPersonaByCurso(request, response);
+        } else if (request.getParameter("action").equals("procesarPersona")) {
+            procesarPersona(request, response);
+
+        }
+    }
+
+    protected void consultarPersonaByCurso(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, Exception {
+        response.setContentType("aplication/json");
+        long idCurso = Long.parseLong(request.getParameter("tipo_curso"));
+        PrintWriter out = response.getWriter();
         Conexion conexion = new Conexion();
         conexion.conectar();
         Consultas consultas = new Consultas();
-        List<CiaCursos> listaDeCursos = consultas.allCurso(conexion.getCon());
-        request.setAttribute("listaCurso", listaDeCursos);
-        request.getRequestDispatcher("asistencia/asistencia.jsp").forward(request, response);
+        List<HashMap> listaDetalleCurso = consultas.getlistDetalleCursoByCurso(conexion.getCon(), idCurso);
+        if (listaDetalleCurso.size() > 0) {
+            JSONArray jsonArray = new JSONArray();
+            for (HashMap hashMap : listaDetalleCurso) {
+                JSONObject jSONObject = new JSONObject();
+                jSONObject.put("drc_id", hashMap.get("dcr_id"));
+                jSONObject.put("per_nombres", hashMap.get("per_nombres"));
+                jSONObject.put("per_apellidos", hashMap.get("per_apellidos"));
+                jSONObject.put("per_documetos", hashMap.get("per_documetos"));
+                jsonArray.put(jSONObject);
+
+            }
+
+            out.print(jsonArray);
+        }
+
+    }
+
+    protected void procesarPersona(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException, Exception {
+
+        String data = request.getParameter("data");
+        JSONArray jSONArray = new JSONArray(data);
+        Reportes main = new Reportes();
+        main.setListReporte(new ArrayList<>());
+        ServletContext context = request.getServletContext();
+        for (int i = 0; i < jSONArray.length(); i++) {
+            JSONObject jSONObject = jSONArray.getJSONObject(i);
+            System.out.println(jSONObject.get("numero_documento")
+                    + " " + jSONObject.getString("id_detalle_curso") + " " + jSONObject.getString("nombres_persona")
+                    + " " + jSONObject.getString("apellido_persona")
+            );
+            Reportes per = new Reportes();
+            per.setParams(new HashMap<>());
+            per.getParams().put("numero_documento", jSONObject.get("numero_documento"));
+            per.getParams().put("nombre_persona", jSONObject.getString("apellido_persona") + " " + jSONObject.getString("nombres_persona"));
+            per.getParams().put("numero_comparendo", jSONObject.get("nombres_persona"));
+
+            main.getListReporte().add(per);
+
+        }
+        main.setRootPdf(context.getRealPath("\\resources\\reportes\\reporteCia.jasper"));
+        masivoEmbargos(main, main.getParams(), main.getRootPdf(), "Certificados", response);
+
+    }
+
+    public void masivoEmbargos(Reportes resport, Map<String, Object> params, String jasperPath, String fileName, HttpServletResponse response) throws JRException {
+        BufferedOutputStream output = null;
+
+        response.setHeader("Content-Type", "application/pdf");
+        //response.setHeader("Content-Length", String.valueOf(bts.length));
+        response.setHeader("Content-Disposition", "inline;attachment; filename=\"" + fileName + "\"");
+        try {
+            output = new BufferedOutputStream(response.getOutputStream(), DEFAULT_BUFFER_SIZE);
+
+            JasperPrint print;
+
+            List<JasperPrint> prints = new ArrayList<>();
+            List<ExporterInputItem> items = new ArrayList<>();
+            Conexion con = new Conexion();
+            con.conectar();
+
+            for (Reportes bt : resport.getListReporte()) {
+                print = JasperFillManager.fillReport((jasperPath), bt.getParams(), con.getCon());
+                File fl = new File("D:/Archivos");
+                if (!fl.exists()) {
+                    fl.mkdirs();
+                }
+                JasperExportManager.exportReportToPdfFile(print, fl.getPath() + File.separator + "Certificados " + bt.getParams().get("numero_documento") + ".pdf");
+
+                ExporterInputItem input = new SimpleExporterInputItem(print);
+                items.add(input);
+            }
+            con.getCon().close();
+            JRPdfExporter exporter = new JRPdfExporter();
+            exporter.setExporterInput(new SimpleExporterInput(items));
+            exporter.setExporterOutput(new SimpleOutputStreamExporterOutput(output));
+            exporter.exportReport();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }//if
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.4.3.final using JasperReports Library version 6.4.3  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="reporteCia" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4965ee33-58b2-4ff4-8047-8a805ade5370">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="nombre_persona" class="java.lang.String"/>
+	<parameter name="numero_documento" class="java.lang.String"/>
+	<parameter name="numero_comparendo" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[select * from dual]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="752" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="px"/>
+			<staticText>
+				<reportElement x="2" y="0" width="560" height="20" uuid="3b22e067-a806-4aab-a33a-c952dc982e66"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[DIRECCIÓN DE TRANSITO DE SOLEDAD GRUPO CULTURAL CIUDADANA Y EDUCACION VIAL]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="2" y="20" width="568" height="20" uuid="21548dd5-13b6-4ea5-87c0-f5b7884615a8"/>
+				<textElement textAlignment="Center">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[EL TRANSITO DE SOLEDAD CERTIFICA QUE:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="40" width="568" height="20" uuid="002cc0e9-f81e-4d4d-ba8f-220a2310ecda"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nombre_persona}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="120" y="680" width="320" height="1" uuid="4f32ec64-6d93-4052-b20c-5c6a5a6343c2"/>
+			</line>
+			<staticText>
+				<reportElement x="152" y="680" width="260" height="20" uuid="d0e1eba0-cfa2-4eb6-8e19-c89643fc64ab"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[INSTRUCTOR CULTURAL VIAL]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="2" y="80" width="546" height="170" uuid="8737df9d-e19f-4d65-a2b4-d385ddd94089"/>
+				<textFieldExpression><![CDATA["Identificado(a) con cédula de ciudadania  numero $P{numero_documento}  el   en el horario de asistió al Curso educativo sobre Normas de tránsito, con una duración de dos (2) hora, acogiéndose al Articulo 136 de la le 769 de 2002,  modificadó por el articulo 24 de la ley 1383 de 2010 y según concepto juridico expedido por el Ministerio  de trasnporte MT No 20111340233331 de fecha de 16 de mayo de 2011 segun orden de comparendo No  $P{numero_comparendo}  de fecha  correspondiente a la jurisdicción de Cienaga."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="120" y="700" width="320" height="30" uuid="4913b2f6-542f-457e-893a-ac711611a474"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[Dirección: calle 63 N° 13-71 Prolongación avenida Murillo, Centro Comercial Nuestro Atlántico, piso 2 local 2005 ]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

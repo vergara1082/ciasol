@@ -44,7 +44,7 @@ public class AgendamientoDelDia extends HttpServlet {
             String tipo = request.getParameter("selectHorario");
             c.conectar();
             Consultas consultas = new Consultas();
-            list = consultas.cursoPorHorario(c.getCon(), Integer.valueOf(tipo));
+           // list = consultas.cursoPorHorario(c.getCon(), Integer.valueOf(tipo));
 
             out.println("<table>");
             out.println("<tr>");
