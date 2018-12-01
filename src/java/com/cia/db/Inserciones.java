@@ -5,6 +5,8 @@
  */
 package com.cia.db;
 
+import com.cia.persistencia.CiaCursos;
+import com.cia.persistencia.CiaDetalleCursos;
 import com.cia.persistencia.CiaInfracciones;
 import com.cia.persistencia.CiaPersonas;
 import java.io.IOException;
@@ -71,7 +73,7 @@ public class Inserciones {
             pst = con.prepareStatement("INSERT INTO public.cia_infracciones(\n"
                     + "	inf_id, per_id, inf_codigo, inf_fecha, inf_factura, inf_estado, "
                     + "inf_fecha_estado, us_id, inf_numero)\n"
-                    + "	VALUES (NEXTVAL('s_infracciones'), ?, ?, ?, ?, ?, ?, ?, ?);", new String[]{"inf_id"});
+                    + "	VALUES (NEXTVAL('s_infracciones'), ?, ?, ?, ?, ?, ?, ?, ?)", new String[]{"inf_id"});
 
             pst.setBigDecimal(1, inf.getCiaPersonas().getPerId());
             pst.setString(2, inf.getInfCodigo());
@@ -103,6 +105,79 @@ public class Inserciones {
     }
 
     /*inf*/
+ /*detCur*/
+    public BigDecimal insertarDetCurso(Connection con, CiaDetalleCursos obj) throws Exception {
+
+        PreparedStatement pst = null;
+        ResultSet key = null;
+        try {
+            pst = con.prepareStatement("INSERT INTO public.cia_detalle_cursos(\n"
+                    + "	dcr_id, cur_id, inf_id, dcr_estado, dcr_fecha_estado)\n"
+                    + "	VALUES (NEXTVAL('s_detalle_cursos'), ?, ?, ?, ?)", new String[]{"dcr_id"});
+
+            pst.setBigDecimal(1, obj.getCiaCursos().getCurId());
+            pst.setBigDecimal(2, obj.getCiaInfracciones().getInfId());
+            pst.setBigDecimal(3, obj.getDcrEstado());
+            pst.setDate(4, new Date(Calendar.getInstance().getTime().getTime()));
+
+            pst.executeUpdate();
+
+            key = pst.getGeneratedKeys();
+            if (key != null) {
+                if (key.next()) {
+                    return key.getBigDecimal(1);
+                }
+            }
+
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (key != null) {
+                key.close();
+            }
+        }
+        return BigDecimal.ZERO;
+    }
+
+    /*detCur*/
+ /*detCur*/
+    public BigDecimal insertarCurso(Connection con, CiaCursos obj) throws Exception {
+
+        PreparedStatement pst = null;
+        ResultSet key = null;
+        try {
+            pst = con.prepareStatement("INSERT INTO public.cia_cursos(\n"
+                    + "	cur_id, hor_id, cur_ins_id, cur_fecha, cur_estado, cur_fecha_estado)\n"
+                    + "	VALUES (NEXTVAL('s_cursos'), ?, ?, ?, ?, ?)", new String[]{"cur_id"});
+
+            pst.setBigDecimal(1, obj.getCiaHorarios().getHorId());
+            pst.setBigDecimal(2, obj.getCiaPersonas().getPerId());
+            pst.setDate(4, new Date(Calendar.getInstance().getTime().getTime()));
+            pst.setBigDecimal(3, obj.getCurEstado());
+            pst.setDate(4, new Date(Calendar.getInstance().getTime().getTime()));
+
+            pst.executeUpdate();
+
+            key = pst.getGeneratedKeys();
+            if (key != null) {
+                if (key.next()) {
+                    return key.getBigDecimal(1);
+                }
+            }
+
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (key != null) {
+                key.close();
+            }
+        }
+        return BigDecimal.ZERO;
+    }
+
+    /*detCur*/
     public static void main(String[] args) throws IOException, Exception {
         Conexion net = new Conexion();
         net.conectar();
