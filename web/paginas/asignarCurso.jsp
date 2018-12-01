@@ -21,8 +21,9 @@
 
         <!-- Custom styles for this template -->
         <link href="<%=request.getContextPath()%>/resources/css/stiker-label.css" rel="stylesheet">
+        <link href="<%=request.getContextPath()%>/resources/css/offcanvas.css" rel="stylesheet">
     </head>
-    <body>
+    <body class="bg-light">
 
         <header>
             <!-- Fixed navbar -->
@@ -34,10 +35,10 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarCollapse">
                     <ul class="navbar-nav mr-auto">
-                        <li class="nav-item active">
+                        <li class="nav-item">
                             <a class="nav-link" href="<%=request.getContextPath()%>/singIn">Home <span class="sr-only">(current)</span></a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item active">
                             <a class="nav-link" href="<%=request.getContextPath()%>/asingInf">Asignar Curso</a>
                         </li>
                         <li class="nav-item">
@@ -53,25 +54,51 @@
         </header>
 
         <!-- Begin page content -->
-        <main role="main" class="container">
-
-
-        </main>
-
-        <footer class="footer">
-            <div class="container">
-                <span class="text-muted">Place sticky footer content here.</span>
+        <div role="main" class="container">
+            <br/>
+            <div class="row">
+                <div class="col-xs-2">
+                </div>
+                <div class="col-xs-8 rounded shadow-sm">
+                    <div class="row ">
+                        <div class="col-xs-4">
+                            <label for ="txtTipoDocumento">Tipo Documeot</label>
+                            <select id="txtDocumento" name="txtTipoDocumento" class="form-control">
+                                <option value="0" selected=""> select </option>
+                            </select>
+                        </div>
+                        <div class="col-xs-4">
+                            <input type="text" name="txtDocumento" id="txtDocumento" class="form-control" />
+                        </div>
+                        <div class="col-xs-4">
+                            <input type="text" name="txtDocumento" id="txtDocumento" class="form-control" />
+                        </div>
+                        <br/>
+                        <br/>
+                        <br/>
+                    </div>
+                </div>
             </div>
-        </footer>
-
-        <!-- Bootstrap core JavaScript
-        ================================================== -->
-        <!-- Placed at the end of the document so the pages load faster -->
-        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-        <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
-        <script src="../../assets/js/vendor/popper.min.js"></script>
-        <script src="../../dist/js/bootstrap.min.js"></script>
+        </div>
+        <div class="col-xs-2">
+        </div>
+    </div>
 
 
-    </body>
+    <footer class="footer">
+        <div class="container">
+            <span class="text-muted">Place sticky footer content here.</span>
+        </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script>window.jQuery || document.write('<script src="../../assets/js/vendor/jquery-slim.min.js"><\/script>')</script>
+    <script src="../../assets/js/vendor/popper.min.js"></script>
+    <script src="../../dist/js/bootstrap.min.js"></script>
+
+
+</body>
 </html>
