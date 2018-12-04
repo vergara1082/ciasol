@@ -47,9 +47,26 @@ public class ProcesosGenerarExcelCurso {
                 fw.write(row);
             }
             fw.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        FileInputStream fis = new FileInputStream(excel);
+        byte[] bytes = new byte[1000];
+        int read;
+        String fileName = excel.getName();
+        String contentType = "application/vnd.ms-excel";
+        response.setContentType(contentType);
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + fileName + "\"");
+        try (ServletOutputStream out = response.getOutputStream()) {
+            while ((read = fis.read(bytes)) != -1) {
+                out.write(bytes, 0, read);
+            }
+            out.flush();
+        }
+
     }
 
 }

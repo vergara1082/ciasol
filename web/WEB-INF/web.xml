@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    
+    <jsp-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <trim-directive-whitespaces>true</trim-directive-whitespaces>
+        </jsp-property-group>
+    </jsp-config>
     <servlet>
         <servlet-name>SingIn</servlet-name>
         <servlet-class>com.cia.servlet.SingIn</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Asignacion</servlet-name>
-        <jsp-file>/paginas/asignarCurso.jsp</jsp-file>
+        <jsp-file>/paginas/asignarCursoInf.jsp</jsp-file>
     </servlet>
     <servlet-mapping>
         <servlet-name>Asignacion</servlet-name>
@@ -24,6 +31,14 @@
         <servlet-name>agregarInfractorCurso</servlet-name>
         <servlet-class>com.cia.servlet.agregarInfractorCurso</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DescargarExcelAgendamiento</servlet-name>
+        <servlet-class>com.cia.servlet.DescargarExcelAgendamiento</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>report</servlet-name>
+        <jsp-file>/paginas/newjsp.jsp</jsp-file>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AgendamientoDelDia</servlet-name>
         <url-pattern>/AgendamientoDelDia</url-pattern>
@@ -31,6 +46,14 @@
     <servlet-mapping>
         <servlet-name>agregarInfractorCurso</servlet-name>
         <url-pattern>/addCurso</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DescargarExcelAgendamiento</servlet-name>
+        <url-pattern>/DescargarExcelAgendamiento</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>report</servlet-name>
+        <url-pattern>/report</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

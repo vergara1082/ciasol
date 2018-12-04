@@ -11,6 +11,7 @@ import com.cia.persistencia.CiaCursos;
 import com.cia.persistencia.CiaInfracciones;
 import com.cia.procesos.ProcesosGenerarExcelCurso;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -18,7 +19,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.faces.context.FacesContext;
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -41,14 +44,14 @@ public class DescargarExcelAgendamiento extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException, Exception {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
+        /* TODO output your page here. You may use following sample code. */
 
-            List<CiaCursos> lista = (List<CiaCursos>) request.getSession().getAttribute("lista");
-            ProcesosGenerarExcelCurso proceso = new ProcesosGenerarExcelCurso();
-            proceso.generarExcelCurso(lista, request, response);
+        List<CiaCursos> lista = (List<CiaCursos>) request.getSession().getAttribute("lista");
+        ProcesosGenerarExcelCurso proceso = new ProcesosGenerarExcelCurso();
+        //proceso.generarExcelCurso(lista, request, response);
 
-        }
+        request.getRequestDispatcher("/report").forward(request, response);
+
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

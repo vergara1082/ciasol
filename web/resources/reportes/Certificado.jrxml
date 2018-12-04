@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Certificado" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="12b93fa3-497a-4f59-a7b2-5cc37909a6af">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="PostgressSql.xml"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="201"/>
+	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="791"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="585"/>
+	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="401"/>
+	<parameter name="id_detalle_curso" class="java.lang.Long"/>
+	<queryString>
+		<![CDATA[Select 
+substring('0000000',0,(8-length(cer_numero)))||cer_numero cert,
+per_nombres || ' ' || per_apellidos as nombre_persona ,per_documento as documento,
+to_char(dcr_fecha_estado,'DD')||' de '|| case  to_char(dcr_fecha_estado,'MM')
+when '1' then 'Enero'
+when '2' then 'Febrero'
+when '3' then 'Marzo'
+when '4' then 'Abril'
+when '5' then 'Mayo'
+when '6' then 'Junio'
+when '7' then 'Julio'
+when '8' then 'Agosto'
+when '9' then 'Septiembre'
+when '10' then 'Octubre'
+when '11' then 'Noviembre'
+when '12' then 'Diciembre' end ||' de '||to_char(dcr_fecha_estado,'yyyy') as mes_lt,
+replace(h.hor_tiempo,'-','a') as horario,i.inf_numero as comparendo,i.inf_fecha fecha_comp,
+i.inf_factura factura,i.inf_fac_fecha f_factura,i.inf_valor_curso valor_c,
+to_char(now(),'DD')||' de '|| case  to_char(now(),'MM')
+when '1' then 'Enero'
+when '2' then 'Febrero'
+when '3' then 'Marzo'
+when '4' then 'Abril'
+when '5' then 'Mayo'
+when '6' then 'Junio'
+when '7' then 'Julio'
+when '8' then 'Agosto'
+when '9' then 'Septiembre'
+when '10' then 'Octubre'
+when '11' then 'Noviembre'
+when '12' then 'Diciembre' end ||' de '||to_char(now(),'yyyy') as mes_ltnow
+ from 
+ Cia_detalle_cursos dt 
+ inner join cia_infracciones i on i.inf_id = dt.inf_id 
+ Inner join cia_personas pe on pe.per_id = i.per_id
+ inner join cia_cursos c on c.cur_id = dt.cur_id
+ inner join cia_horarios h on h.hor_id = c.hor_id
+ inner join cia_certificados cer on cer.dcr_id = dt.dcr_id
+ Where dt.dcr_id =  $P{id_detalle_curso}]]>
+	</queryString>
+	<field name="cert" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="cert"/>
+	</field>
+	<field name="nombre_persona" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="nombre_persona"/>
+	</field>
+	<field name="documento" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="documento"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cia_personas"/>
+	</field>
+	<field name="mes_lt" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="mes_lt"/>
+	</field>
+	<field name="horario" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="horario"/>
+	</field>
+	<field name="comparendo" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="comparendo"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cia_infracciones"/>
+	</field>
+	<field name="fecha_comp" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="fecha_comp"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cia_infracciones"/>
+	</field>
+	<field name="factura" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="factura"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cia_infracciones"/>
+	</field>
+	<field name="f_factura" class="java.sql.Date">
+		<property name="com.jaspersoft.studio.field.label" value="f_factura"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cia_infracciones"/>
+	</field>
+	<field name="valor_c" class="java.math.BigDecimal">
+		<property name="com.jaspersoft.studio.field.label" value="valor_c"/>
+		<property name="com.jaspersoft.studio.field.tree.path" value="cia_infracciones"/>
+	</field>
+	<field name="mes_ltnow" class="java.lang.String">
+		<property name="com.jaspersoft.studio.field.label" value="mes_ltnow"/>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="109">
+			<rectangle>
+				<reportElement x="0" y="10" width="571" height="91" uuid="7c58ae85-8b17-437c-a84e-381eb1d9d72c"/>
+			</rectangle>
+			<image>
+				<reportElement x="3" y="15" width="193" height="81" uuid="5ff924fd-4830-4539-bb6b-451bd1c9f6d2"/>
+				<imageExpression><![CDATA["head.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="170" y="12" width="400" height="91" uuid="b79441c9-bff2-480d-a669-adc14771db40"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font fontName="Arial" size="25"/>
+				</textElement>
+				<text><![CDATA[Instituto municipal de Tránsito y Transporte de soledad]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="600" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="26" width="561" height="267" isPrintWhenDetailOverflows="true" uuid="9b01fe4d-cb87-46cc-b117-1dc9fe5f588a"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Identificado(a) con cédula de ciudadania  numero "+ $F{documento}+"  el   en el horario "+$F{horario}+" de asistió al \"Curso educativo sobre Normas de tránsito\", con una duración de dos (2) hora, acogiéndose al Articulo 136 de la le 769 de 2002,  modificadó por el articulo 24 de la ley 1383 de 2010 y según concepto juridico expedido por el Ministerio  de trasnporte MT No 20111340233331 de fecha de 16 de mayo dae 2011 según orden de comparendo No "+ $F{comparendo}+" de fecha "+$F{fecha_comp}+"\n\n\n"+
+"Recibo de pago Curso Educativo  Asistencial No "+$F{factura}+" de fecha "+$F{f_factura}+" por valor de "+$F{valor_c}+" \n\n\n"
++"Se expide en Soledad a los  "+$F{mes_ltnow}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="25" width="568" height="20" uuid="6e17fa81-8b72-4f36-a201-68145ee67fa7"/>
+				<textElement textAlignment="Center">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_persona}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="420" width="571" height="110" uuid="ef17aff1-5d8e-4c90-a13d-3cc0e495ad41"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA["INSTRUCTOR \n"+
+"________________________________________________________\n"+
+"Dirección: calle 63 N° 13-71 Prolongación avenida Murillo,\n"
++" Centro Comercial Nuestro Atlántico, piso 2 local 2005 \n"+
+"Soledad Confiable \n "+"www.transitosoledad.gov.co"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="2" width="160" height="20" uuid="6711f40d-5b14-4154-ad30-b93565546137"/>
+				<textElement textAlignment="Left">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Certicación N° "+$F{cert}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

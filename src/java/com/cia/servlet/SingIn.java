@@ -35,8 +35,8 @@ public class SingIn extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-
+        try {
+            PrintWriter out = response.getWriter();
             Conexion con = new Conexion();
             Consultas consultas = new Consultas();
             request.getSession().setAttribute("conexion", con);
@@ -51,27 +51,17 @@ public class SingIn extends HttpServlet {
 
                 CiaUsuarios us = consultas.validarUsuario(con.getCon(), user, pass);
                 if (us == null) {
-                    /* TODO output your page here. You may use following sample code. */
-                    out.println("<!DOCTYPE html>");
-                    out.println("<html>");
-                    out.println("<head>");
-                    out.println("<title>Servlet SingIn</title>");
-                    out.println("</head>");
-                    out.println("<body>");
-                    out.println("<h1>Servlet SingIn at " + request.getContextPath() + "</h1>");
-                    out.println("</body>");
-                    out.println("</html>");
-                    return;
+                    request.getRequestDispatcher("index.html").forward(request, response);
                 }
                 request.getSession().setAttribute("user", us);
-                request.getRequestDispatcher("paginas/inicio.jsp").forward(request, response);
+                request.getRequestDispatcher("paginas/inicio2.jsp").forward(request, response);
 
             } catch (Exception ex) {
                 if (request.getSession().getAttribute("user") != null) {
                     if (request.getSession().getAttribute("conexion") != null) {
                         con = (Conexion) request.getSession().getAttribute("conexion");
                         if (con.testConexion()) {
-                            request.getRequestDispatcher("paginas/inicio.jsp").forward(request, response);
+                            request.getRequestDispatcher("paginas/inicio2.jsp").forward(request, response);
                         }
                         response.reset();
                         request.getRequestDispatcher(request.getContextPath()).forward(request, response);
@@ -79,6 +69,7 @@ public class SingIn extends HttpServlet {
                 }
             }
 
+        }catch(Exception ex){
         }
     }
 

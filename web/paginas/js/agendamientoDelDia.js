@@ -11,5 +11,5 @@ function consultar() {
 }
 
 function descargarExcel() {
-    $.post('../DescargarExcelAgendamiento');
+    $.post('../report');
 }

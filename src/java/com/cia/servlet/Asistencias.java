@@ -7,12 +7,14 @@ package com.cia.servlet;
 
 import com.cia.db.Conexion;
 import com.cia.db.Consultas;
+import com.cia.db.Inserciones;
 import com.cia.persistencia.CiaCursos;
 import com.cia.utils.Cifrado.Reportes;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -62,7 +64,7 @@ public class Asistencias extends HttpServlet {
             Consultas consultas = new Consultas();
             List<CiaCursos> listaDeCursos = consultas.allCurso(conexion.getCon());
             request.setAttribute("listaCurso", listaDeCursos);
-            request.getRequestDispatcher("asistencia/asistencia.jsp").forward(request, response);
+            request.getRequestDispatcher("paginas/asistenciaInf.jsp").forward(request, response);
         } else if (request.getParameter("action").equals("consultarPersonasCursos")) {
             consultarPersonaByCurso(request, response);
         } else if (request.getParameter("action").equals("procesarPersona")) {
@@ -103,8 +105,12 @@ public class Asistencias extends HttpServlet {
         String data = request.getParameter("data");
         JSONArray jSONArray = new JSONArray(data);
         Reportes main = new Reportes();
-        main.setListReporte(new ArrayList<>());
+        main.setListReporte(new ArrayList<Reportes>());
         ServletContext context = request.getServletContext();
+        Conexion con = new Conexion();
+        Consultas consultas = new Consultas();
+        Inserciones in = new Inserciones();
+        con.conectar();
         for (int i = 0; i < jSONArray.length(); i++) {
             JSONObject jSONObject = jSONArray.getJSONObject(i);
             System.out.println(jSONObject.get("numero_documento")
@@ -112,16 +118,21 @@ public class Asistencias extends HttpServlet {
                     + " " + jSONObject.getString("apellido_persona")
             );
             Reportes per = new Reportes();
-            per.setParams(new HashMap<>());
-            per.getParams().put("numero_documento", jSONObject.get("numero_documento"));
-            per.getParams().put("nombre_persona", jSONObject.getString("apellido_persona") + " " + jSONObject.getString("nombres_persona"));
-            per.getParams().put("numero_comparendo", jSONObject.get("nombres_persona"));
-
+            per.setParams(new HashMap<String, Object>());
+            per.getParams().put("id_detalle_curso", new Long(jSONObject.get("id_detalle_curso").toString()));
+            long dercur = new BigDecimal(per.getParams().get("id_detalle_curso").toString()).longValue();
+            if (!consultas.tieneCertifiaco(con.getCon(), dercur)) {
+                in.insertarCertificado(con.getCon(), BigDecimal.valueOf(dercur));
+            }
+            
             main.getListReporte().add(per);
 
         }
-        main.setRootPdf(context.getRealPath("\\resources\\reportes\\reporteCia.jasper"));
-        masivoEmbargos(main, main.getParams(), main.getRootPdf(), "Certificados", response);
+        con.getCon().commit();
+        con.getCon().close();
+        main.setRootPdf(context.getRealPath("\\resources\\reportes\\Certificado.jasper"));
+        request.getSession().setAttribute("reporte", main);
+//masivoEmbargos(main, main.getParams(), main.getRootPdf(), "Certificados", response);
 
     }
 

@@ -47,6 +47,8 @@ public class Conexion {
             }
             con = DriverManager.getConnection(url, user, password);
             con.setAutoCommit(false);
+            
+            System.err.println();
         }
     }
 

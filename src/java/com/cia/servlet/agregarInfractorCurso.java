@@ -16,6 +16,7 @@ import com.cia.persistencia.CiaUsuarios;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,32 +69,37 @@ public class agregarInfractorCurso extends HttpServlet {
                                     if (perId.intValue() == 0) {
                                         response.setStatus(500);
                                         con.getCon().rollback();
+                                        out.print("<span class=\"text-warning\"><h5>Error al realizar registro</h5></span>");
                                         return;
                                     }
                                 }
 
                                 CiaInfracciones inf = new CiaInfracciones(null, cp, new CiaUsuarios(BigDecimal.ONE, cp, "", "", null),
                                         request.getParameter("txtInfCodigo"),
-                                        request.getParameter("txtInfFactura"), BigDecimal.ONE);
+                                        request.getParameter("txtInfFactura"), BigDecimal.ONE, new BigDecimal(request.getParameter("txtInfValorCurso")));
                                 inf.setInfNumero(request.getParameter("txtInfNumero"));
-                                inf.setInfFecha(new Date());
+                                inf.setInfFecha(new SimpleDateFormat("dd/MM/yyyy").parse(request.getParameter("fechaComp")));
+                                inf.setInfFacFecha(new SimpleDateFormat("dd/MM/yyyy").parse(request.getParameter("fechaFac")));
                                 inf.setInfId(in.insertarInfraccion(con.getCon(), inf));
                                 if (inf.getInfId().intValue() == 0) {
                                     response.setStatus(500);
                                     con.getCon().rollback();
+                                    out.print("<span class=\"text-warning\"><h5>Error al realizar registro</h5></span>");
                                     return;
                                 }
 
                                 CiaCursos cur = consultas.consultaCursoPorHorario(con.getCon(), new BigDecimal(request.getParameter("txtCurTipo")));
-                                if (cur == null) {
+
+                                /*if (cur == null) {
+                                    cur = new CiaCursos();
                                     cur.setCiaHorarios(consultas.getHorarioByid(con.getCon(), new BigDecimal(request.getParameter("txtCurTipo"))));
-                                    cur.setCiaPersonas(cp);
+                                    cur.setCiaPersonas(new CiaPersonas(BigDecimal.ONE));
                                     cur.setCurEstado(BigDecimal.ONE);
                                     cur.setCurFecha(new Date());
                                     cur.setCurFechaEstado(new Date());
                                     cur.setCurId(in.insertarCurso(con.getCon(), cur));
-                                }
-
+                                    con.getCon().commit();
+                                }*/
                                 CiaDetalleCursos detcur = new CiaDetalleCursos(null, cur, inf, BigDecimal.ONE, new Date());
 
                                 detcur.setDcrId(in.insertarDetCurso(con.getCon(), detcur));
@@ -101,17 +107,18 @@ public class agregarInfractorCurso extends HttpServlet {
                                 if (detcur.getDcrId().intValue() == 0) {
                                     response.setStatus(500);
                                     con.getCon().rollback();
+                                    out.print("<span class=\"text-warning\"><h5>Error al realizar registro</h5></span>");
                                     return;
                                 }
                                 con.getCon().commit();
-
+                                out.print("<span class=\"text-success\"><h5>Registro realizado correctamente</h5></span>");
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 con.getCon().rollback();
+                                out.print("<span class=\"text-warning\"><h5>Error al realizar registro</h5></span>");
                             }
                         }
-
-                        request.getRequestDispatcher("/asingInf").forward(request, response);
+                        //request.getRequestDispatcher("/asingInf").forward(request, response);
                     }
                 }
             } catch (Exception e) {

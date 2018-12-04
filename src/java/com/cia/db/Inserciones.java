@@ -5,6 +5,7 @@
  */
 package com.cia.db;
 
+import Cifrado.Encriptar_md5;
 import com.cia.persistencia.CiaCursos;
 import com.cia.persistencia.CiaDetalleCursos;
 import com.cia.persistencia.CiaInfracciones;
@@ -72,8 +73,8 @@ public class Inserciones {
         try {
             pst = con.prepareStatement("INSERT INTO public.cia_infracciones(\n"
                     + "	inf_id, per_id, inf_codigo, inf_fecha, inf_factura, inf_estado, "
-                    + "inf_fecha_estado, us_id, inf_numero)\n"
-                    + "	VALUES (NEXTVAL('s_infracciones'), ?, ?, ?, ?, ?, ?, ?, ?)", new String[]{"inf_id"});
+                    + "inf_fecha_estado, us_id, inf_numero, inf_valor_curso, inf_fac_fecha)\n"
+                    + "	VALUES ((NEXTVAL('s_infracciones')), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", new String[]{"inf_id"});
 
             pst.setBigDecimal(1, inf.getCiaPersonas().getPerId());
             pst.setString(2, inf.getInfCodigo());
@@ -83,6 +84,8 @@ public class Inserciones {
             pst.setDate(6, new Date(Calendar.getInstance().getTime().getTime()));
             pst.setBigDecimal(7, inf.getCiaUsuarios().getUsId());
             pst.setString(8, inf.getInfNumero());
+            pst.setBigDecimal(9, inf.getInfvalorCurso());
+            pst.setDate(10, new Date(Calendar.getInstance().getTime().getTime()));
 
             pst.executeUpdate();
 
@@ -146,10 +149,9 @@ public class Inserciones {
 
         PreparedStatement pst = null;
         ResultSet key = null;
-        Conexion net = new Conexion();
-        net.conectar();
+
         try {
-            pst = net.getCon().prepareStatement("INSERT INTO public.cia_cursos(\n"
+            pst = con.prepareStatement("INSERT INTO public.cia_cursos(\n"
                     + "	cur_id, hor_id, cur_ins_id, cur_fecha, cur_estado, cur_fecha_estado)\n"
                     + "	VALUES (NEXTVAL('s_cursos'), ?, ?, ?, ?, ?)", new String[]{"cur_id"});
 
@@ -180,14 +182,46 @@ public class Inserciones {
     }
 
     /*detCur*/
+    public BigDecimal insertarCertificado(Connection con, BigDecimal dercur) throws Exception {
+
+        PreparedStatement pst = null;
+        ResultSet key = null;
+
+        try {
+            pst = con.prepareStatement("INSERT INTO cia_certificados(\n"
+                    + "	cer_id, cer_numero, dcr_id, cer_fecha)\n"
+                    + "	VALUES ((NEXTVAL('s_certificado')), (NEXTVAL('s_numero_cer')), ?, ?)");
+
+            pst.setBigDecimal(1, dercur);
+            pst.setDate(2, new Date(Calendar.getInstance().getTime().getTime()));
+
+            pst.executeUpdate();
+
+            key = pst.getGeneratedKeys();
+            if (key != null) {
+                if (key.next()) {
+                    return key.getBigDecimal(1);
+                }
+            }
+
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (key != null) {
+                key.close();
+            }
+        }
+        return BigDecimal.ZERO;
+    }
+
+    /*detCur*/
     public static void main(String[] args) throws IOException, Exception {
         Conexion net = new Conexion();
         net.conectar();
         try {
-            Inserciones in = new Inserciones();
-            CiaPersonas per = new CiaPersonas(null, "Alex", "Xad", BigDecimal.ONE, "8810857", BigDecimal.ONE);
-            per.setPerId(in.insertarPersona(net.getCon(), per));
-            net.getCon().commit();
+            Encriptar_md5 en = new Encriptar_md5();
+            System.out.println(en.get_md5("ciasoledad"));
         } catch (Exception e) {
             e.printStackTrace();
             net.getCon().rollback();
