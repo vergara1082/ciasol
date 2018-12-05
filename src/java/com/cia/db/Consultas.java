@@ -318,6 +318,42 @@ public class Consultas {
         return ci;
     }
 
+    public List<CiaInfracciones> infraccionesByPersona(Connection c, int per_id) throws Exception {
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        CiaInfracciones ci = new CiaInfracciones();
+        try {
+            pst = c.prepareStatement("SELECT * FROM CIA_INFRACCIONES WHERE PER_ID =?");
+            pst.setInt(1, per_id);
+            rst = pst.executeQuery();
+            List<CiaInfracciones> ciaInfraccioneses = new ArrayList<>();
+            while (rst.next()) {
+                ci = new CiaInfracciones();
+                ci.setCiaPersonas(new CiaPersonas(rst.getBigDecimal("per_id")));
+                ci.setInfNumero(rst.getString("inf_numero"));
+                ci.setInfId(rst.getBigDecimal("inf_id"));
+                ci.setInfFecha(rst.getDate("inf_fecha"));
+                ci.setInfCodigo(rst.getString("inf_codigo"));
+                ci.setInfFactura(rst.getString("inf_factura"));
+                ci.setInfvalorCurso(rst.getBigDecimal("inf_valor_curso"));
+                ci.setInfFacFecha(rst.getDate("inf_fac_fecha"));
+                ciaInfraccioneses.add(ci);
+            }
+            return ciaInfraccioneses;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new Exception("Error al consultar persona.");
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (rst != null) {
+                rst.close();
+            }
+        }
+
+    }
+
     public static void main(String[] args) throws IOException, Exception {
         Conexion net = new Conexion();
         net.conectar();

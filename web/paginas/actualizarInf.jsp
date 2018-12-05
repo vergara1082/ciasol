@@ -36,7 +36,7 @@
         <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
     <body class="hold-transition skin-green-light sidebar-mini fixed">
-        <div class="wrapper">
+        <div class="wrapper" id="app">
 
             <header class="main-header">
 
@@ -126,6 +126,7 @@
                                 <li class="active"><a href="<%=request.getContextPath()%>/asistencias"><i class="fa fa-circle-o"></i> Registro de Asistencia</a></li>
                                 <li class=""><a href="<%=request.getContextPath()%>/historicoCert"><i class="fa fa-circle-o"></i> Historico Certificado</a></li>
                                 <li class=""><a href="<%=request.getContextPath()%>/actualizar"><i class="fa fa-circle-o"></i>Actualizar </a></li>
+
                             </ul>
                         </li>
                     </ul>
@@ -143,70 +144,157 @@
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li class="active">Registro Asistencias</li>
+                        <li class="active">Actualizar Datos</li>
                     </ol>
                 </section>
 
                 <!-- Main content -->
+                <!-- Main content -->
                 <section class="content">
-                    <div id="app">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <form>
-                                    <div class="col-xs-4">
-
-                                        <select id="tipoCurso" class="form-control col-sm-4">
-                                            <%
-                                                List<CiaCursos> ciaCursos = (List<CiaCursos>) request.getAttribute("listaCurso");
-                                                for (CiaCursos elem : ciaCursos) {
-                                            %> 
-                                            <option value="<%=elem.getCurId().toString()%>"><%= elem.getCiaHorarios().getHorTiempo()%> </option>
-                                            <%
-                                                }
-                                            %>
-                                        </select> </div>
-                                    <div class="col-xs-4">
-                                        <input type="button" value="consultar" class="btn btn-success ml-2" @click="consultarCurso"/>
-                                    </div>
-                                    <table class="table table-striped table-hover" v-if="items.length > 0">
-                                        <thead>
-                                            <tr>
-                                                <th>
-                                                    <label class="form-checkbox">
-                                                        <input type="checkbox" v-model="selectAll" @click="select">
-                                                        Seleccionar todo
-                                                        <i class="form-icon"></i>
-                                                    </label>
-                                                </th>
-                                                <th>Numero Documento</th>
-                                                <th>Nombres</th>
-                                                <th>Apellidos</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="i in items">
-                                                <td>
-                                                    <label class="form-checkbox">
-                                                        <input type="checkbox" :value="i" v-model="selected">
-                                                        <i class="form-icon"></i>
-                                                    </label>
-                                                </td>
-                                                <td>{{i.numero_documento}}</td>
-                                                <td>{{i.nombres_persona}}</td>
-                                                <td>{{i.apellido_persona}}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                    <input type="button" @click="guardarAsistencias" class="btn btn-success" value="procesar"  v-if="items.length > 0"/>
-                                </form>  
+                    <form id="frmAsc">
+                        <div class="row" >
+                            <div v-if="renderDatos == false">
+                                <div class="col-xs-2">
+                                    <label for ="cmbTipoDocumento">Tipo Documento</label>
+                                    <select id="cmbTipoDocumento" name="cmbTipoDocumento" class="form-control">
+                                        <option value="0" selected=""> Seleccione ... </option>
+                                        <option value="1" > Cédula</option>
+                                        <option value="2" > Nit </option>
+                                    </select>
+                                </div>
+                                <div class="col-xs-2">
+                                    <label for ="txtDocumento">Documento</label>
+                                    <input type="text" name="txtDocumento" id="txtDocumento" placeholder="Documento" class="form-control" />
+                                </div>
+                                <div class="col-xs-2">
+                                    <label for >&nbsp;</label>
+                                    <input type="button" class="btn btn-success form-control col-xs-6" @click="guardar" id="Guardar" value="Buscar"  />
+                                </div> 
                             </div>
+                            <table class="table table-striped table-hover" v-if="items.length > 0">
+                                <thead>
+                                    <tr>
+                                        <th>Numero Documento</th>
+                                        <th>Nombres</th>
+                                        <th>Apellidos</th>
+                                        <th>Numero infracion</th>
+                                        <th>acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-for="i in items">
+                                        <td>{{i.numero_documento}}</td>
+                                        <td>{{i.nombres_persona}}</td>
+                                        <td>{{i.apellido_persona}}</td>
+                                        <td>{{i.numero_comparendo}}</td>
+                                        <td>
+                                            <a v-on:click="test(i)"  v-model="detalle_curso_persona_current">Editar!</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <section class="content" v-if="renderDatos == true">
+                                <form id="frmAsc">
+                                    <div class="row">
+                                        <div class="col-xs-2">
+                                            <label for ="cmbTipoDocumento">Tipo Documento</label>
+                                            <select id="cmbTipoDocumento" name="cmbTipoDocumento" class="form-control">
+                                                <option value="0" selected=""> Seleccione ... </option>
+                                                <option value="1" > Cédula</option>
+                                                <option value="2" > Nit </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-2">
+                                            <label for ="txtDocumento">Documento</label>
+                                            <input type="text" name="txtDocumento" v-model="detalle_curso_persona_current.numero_documento" placeholder="Documento" class="form-control" />
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <label for ="txtNombres">Nombres</label>
+                                            <input type="text" name="txtNombres"  v-model="detalle_curso_persona_current.nombres_persona" placeholder="Nombres" class="form-control" />
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <label for ="txtApellidos">Apellidos</label>
+                                            <input type="text" name="txtApellidos" v-model="detalle_curso_persona_current.apellido_persona" placeholder="Apellidos" class="form-control" />
+                                        </div>
+                                    </div>
+                                    <br/>
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <label for ="txtInfFactura">Número Factura</label>
+                                            <input type="text" name="txtInfFactura" v-model="detalle_curso_persona_current.numero_factura" placeholder="Número Factura" class="form-control" />
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label>Fecha Factura</label>
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                        <input type="text" class="form-control" placeholder="dd/MM/yyyy" name="txtFechaFac" v-model="detalle_curso_persona_current.fecha_factura"  data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="">
+                                                    </div>
+                                                    <!-- /.input group -->
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label for ="txtInfValorCurso">Valor Curso</label>
+                                            <input type="text" name="txtInfValorCurso" id="txtInfValorCurso" placeholder="Valor Curso" class="form-control" v-model="detalle_curso_persona_current.valor_curso"/>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label for ="txtDocumento">Codigo de Infraccion</label>
+                                            <input type="text" name="txtInfCodigo" id="txtInfCodigo" placeholder="Codigo Infraccion" class="form-control" v-model="detalle_curso_persona_current.numero_infracion" />
+                                        </div>
+                                    </div>
+
+                                    <br/>
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <label for ="txtDocumento">Número Comparendo</label>
+                                            <input type="text" name="txtInfNumero" id="txtInfNumero" placeholder="Número Comparendo" class="form-control"  v-model="detalle_curso_persona_current.numero_comparendo"/>
+                                        </div>
+
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label>Fecha Comparendo</label>
+                                                <div class="form-group">
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon">
+                                                            <i class="fa fa-calendar"></i>
+                                                        </div>
+                                                        <input type="text" placeholder="dd/MM/yyyy" class="form-control" name="txtFechaComp" id="txtFechaComp" v-model="detalle_curso_persona_current.fecha_comparendo"  data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="">
+                                                    </div>
+                                                    <!-- /.input group -->
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-xs-3">
+                                            <label for ="txtCurTipo">Horario</label>
+                                            <select id="txtCurTipo" class="form-control">
+                                                <option value="0" selected=""> Seleccione... </option>
+                                                <option value="1" > 08:00 - 10:00 </option>
+                                                <option value="2" > 10:00 - 12:00</option>
+                                                <option value="3" > 01:30 - 03:30 </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <label for >&nbsp;</label>
+                                            <input type="button" class="btn btn-success form-control col-xs-6" @click="editarDatos" id="Guardar" value="Guardar" name="Guardar" />
+                                        </div>
+                                    </div>
+                                    <div id="res">
+
+                                    </div>
+                                </form>
+                            </section>
                         </div>
-                    </div>
+                    </form>
                     <script>
-                        <%@include file="js/asistencia.js" %>
+                        <%@include file="js/actualizar.js" %>
                     </script>
                 </section>
+                <!-- /.content -->
                 <!-- /.content -->
             </div>
             <!-- /.content-wrapper -->
