@@ -125,6 +125,7 @@
                                 <li class=""><a href="<%=request.getContextPath()%>/paginas/agendaDiaInf.jsp"><i class="fa fa-circle-o"></i> Agendar Curso</a></li>
                                 <li class=""><a href="<%=request.getContextPath()%>/asistencias"><i class="fa fa-circle-o"></i> Registro de Asistencia</a></li>
                                 <li class="active"><a href="<%=request.getContextPath()%>/historicoCert"><i class="fa fa-circle-o"></i> Historico Certificado</a></li>
+                                <li class=""><a href="<%=request.getContextPath()%>/reasignacionCur"><i class="fa fa-circle-o"></i> Reasignación Curso</a></li>
                             </ul>
                         </li>
                     </ul>

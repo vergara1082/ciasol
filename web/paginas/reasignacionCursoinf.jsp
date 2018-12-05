@@ -1,3 +1,5 @@
+<%@page import="java.util.List"%>
+<%@page import="com.cia.persistencia.CiaCursos"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -29,8 +31,9 @@
 
         <!-- Google Font -->
         <link rel="stylesheet"
-              href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
-        <script src="<%=request.getContextPath()%>/paginas/js/agendamientoDelDia.js" type="text/javascript"></script>
+              href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic"/>
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     </head>
     <body class="hold-transition skin-green-light sidebar-mini fixed">
         <div class="wrapper">
@@ -74,24 +77,9 @@
                                         </p>
                                     </li>
                                     <!-- Menu Body -->
-                                    <li class="user-body">
-                                        <div class="row">
-                                            <div class="col-xs-4 text-center">
-                                                <a href="#">Followers</a>
-                                            </div>
-                                            <div class="col-xs-4 text-center">
-                                                <a href="#">Sales</a>
-                                            </div>
-                                            <div class="col-xs-4 text-center">
-                                                <a href="#">Friends</a>
-                                            </div>
-                                        </div>
-                                        <!-- /.row -->
-                                    </li>
                                     <!-- Menu Footer-->
                                     <li class="user-footer">
                                         <div class="pull-left">
-                                            <a href="#" class="btn btn-default btn-flat">Profile</a>
                                         </div>
                                         <div class="pull-right">
                                             <a href="#" class="btn btn-default btn-flat">Sign out</a>
@@ -124,17 +112,17 @@
                     </div>
                     <!-- sidebar menu: : style can be found in sidebar.less -->
                     <ul class="sidebar-menu" data-widget="tree">
-                        <li class="header">Menu</li>
+                        <li class="header">Menú</li>
                         <li class="active treeview menu-open">
                             <a href="#">
-                                <i class="fa fa-dashboard"></i> <span>Menu</span>
+                                <i class="fa fa-dashboard"></i> <span>Menú</span>
                                 <span class="pull-right-container">
                                     <i class="fa fa-angle-left pull-right"></i>
                                 </span>
                             </a>
                             <ul class="treeview-menu">
                                 <li><a href="<%=request.getContextPath()%>/asingInf"><i class="fa fa-circle-o"></i>registro en Cursos</a></li>
-                                <li class="active"><a href="<%=request.getContextPath()%>/paginas/agendaDiaInf.jsp"><i class="fa fa-circle-o"></i> Agendar Curso</a></li>
+                                <li class=""><a href="<%=request.getContextPath()%>/paginas/agendaDiaInf.jsp"><i class="fa fa-circle-o"></i> Agendar Curso</a></li>
                                 <li class=""><a href="<%=request.getContextPath()%>/asistencias"><i class="fa fa-circle-o"></i> Registro de Asistencia</a></li>
                                 <li class=""><a href="<%=request.getContextPath()%>/historicoCert"><i class="fa fa-circle-o"></i> Historico Certificado</a></li>
                                 <li class=""><a href="<%=request.getContextPath()%>/reasignacionCur"><i class="fa fa-circle-o"></i> Reasignación Curso</a></li>
@@ -147,47 +135,125 @@
 
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
-                <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Agendación de Cursos
-                        <small>Version 0.1</small>
+                        Reasignar Curso
+                        <small>Version 0.0.1</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li class="active">Menu</li>
+                        <li class="active">Reasignar Curso</li>
                     </ol>
                 </section>
-
                 <!-- Main content -->
                 <section class="content">
-                    <form id="agendamiento" action="javascript:consultar()">
-                        <div class="row">
-                            <div class="col-md-2"></div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label>Seleccione un curso.</label>
-                                    <select id="selectHorario" name="selectHorario" class="form-control col-lg-12" >
-                                        <option selected="true" >Seleccione.</option>
-                                        <option value="1" >8:00 - 10:00</option>
-                                        <option value="2" >10:00 - 12:00</option>
-                                        <option value="3" >1:30 - 3:30</option>
+
+                    <div id="app">
+                        <form>
+                            <div class="row">
+
+                                <div class="col-xs-2">
+                                    <label for ="cmbTipoDocumento">Tipo Documento</label>
+                                    <select id="cmbTipoDocumento" name="cmbTipoDocumento" class="form-control">
+                                        <option value="0" selected=""> Seleccione ... </option>
+                                        <option value="1" > Cédula</option>
+                                        <option value="2" > Nit </option>
                                     </select>
                                 </div>
-                            </div>
-                            <div class="col-md-2">
-                                <label>&nbsp;</label>
-                                <input id="submit" type="submit" value="Consultar" class="btn  btn-success  form-control" />
-                            </div>
-                        </div>
-                        <div class="col-md-12">
-                            <div class="container">
-                                <div id="tabla">
-
+                                <div class="col-xs-3">
+                                    <div class="form-group">
+                                        <label>Documento</label>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-clipboard"></i>
+                                                </div>
+                                                <input type="text" class="form-control" placeholder="Documento" name="txtDocumento" id="txtDocumento" >
+                                            </div>
+                                            <!-- /.input group -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-3">
+                                    <label>&nbsp;</label>
+                                    <input type="button" value="consultar" class="btn btn-success form-control col-xs-4 ml-2" @click="consultarCurso"/>
                                 </div>
                             </div>
-                        </div>
-                    </form>
+                            <div class="row">
+                                <table class="table table-striped table-hover col-xs-12" v-if="items.length > 0">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <label class="form-checkbox">
+                                                    <input type="checkbox" v-model="selectAll" @click="select">
+                                                    Seleccionar todo
+                                                    <i class="form-icon"></i>
+                                                </label>
+                                            </th>
+                                            <th>Numero Documento</th>
+                                            <th>Nombres</th>
+                                            <th>Apellidos</th>
+                                            <th>Numero Comparendo</th>
+                                            <th>Codigo Comparendo</th>
+                                            <th>Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="i in items">
+                                            <td>
+                                                <label class="form-checkbox">
+                                                    <input type="checkbox" :value="i" v-model="selected">
+                                                    <i class="form-icon"></i>
+                                                </label>
+                                            </td>
+                                            <td>{{i.numero_documento}}</td>
+                                            <td>{{i.nombres_persona}}</td>
+                                            <td>{{i.apellido_persona}}</td>
+                                            <td>{{i.inf_numero}}</td>
+                                            <td>{{i.inf_codigo}}</td>
+                                            <td>{{i.dcr_fecha}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row"  v-if="items.length > 0">
+                                <div class="col-xs-4">
+                                    <label>Horario</label>
+                                    <select id="tipoCurso" class="form-control col-sm-4">
+                                        <option value ="0" selected>Seleccione ... </option>
+                                        <%
+                                            List<CiaCursos> ciaCursos = (List<CiaCursos>) request.getAttribute("listaCurso");
+                                            for (CiaCursos elem : ciaCursos) {
+                                        %> 
+                                        <option value="<%=elem.getCurId().toString()%>"><%= elem.getCiaHorarios().getHorTiempo()%> </option>
+                                        <%
+                                            }
+                                        %>
+                                    </select>
+                                </div>
+                                <div class="col-xs-3">
+                                    <div class="form-group">
+                                        <label>Fecha Curso</label>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="text" class="form-control" placeholder="dd/MM/yyyy" name="txtFechaFac" id="txtFechaFac"  data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="">
+                                            </div>
+                                            <!-- /.input group -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="button" @click="guardarAsistencias" class="btn btn-success" value="procesar" />
+
+                            </div>
+                            <script>
+                                <%@include file="js/reasignacionCursos.js" %>
+                            </script>
+                        </form>  
+                    </div>
+
                 </section>
                 <!-- /.content -->
             </div>
