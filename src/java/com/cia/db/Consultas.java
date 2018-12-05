@@ -445,6 +445,52 @@ public class Consultas {
         }
     }
 
+    public List<HashMap> getlistDetalleCursoByPersonaReasignacion(Connection conexion, long tipoDoc, String documento) throws Exception {
+
+        PreparedStatement pst = null;
+        ResultSet rst = null;
+        try {
+
+            pst = conexion.prepareStatement("Select\n"
+                    + "pe.*,inf.*,dcr.dcr_id\n"
+                    + "from\n"
+                    + "Cia_personas pe\n"
+                    + "Inner join Cia_infracciones inf on pe.per_id= inf.per_id\n"
+                    + "Inner join Cia_detalle_cursos dcr on dcr.inf_id = inf.inf_id \n"
+                    + "where \n"
+                    + "pe.per_documento = ? and pe.per_tp_documento = ?\n"
+                    + "and\n"
+                    + "dcr.dcr_id not in (Select dcr_id from cia_certificados)");
+            pst.setLong(2, tipoDoc);
+            pst.setString(1, documento);
+            rst = pst.executeQuery();
+            List<HashMap> listDetalleCursos = new ArrayList<>();
+            while (rst.next()) {
+                HashMap hashMap = new HashMap();
+                hashMap.put("dcr_id", rst.getBigDecimal("dcr_id").toString());
+                hashMap.put("per_nombres", rst.getString("per_nombres"));
+                hashMap.put("per_documento", rst.getString("per_documento"));
+                hashMap.put("per_apellidos", rst.getString("per_apellidos"));
+                hashMap.put("inf_numero", rst.getString("inf_numero"));
+                hashMap.put("dcr_fecha", rst.getString("dcr_fecha"));
+                hashMap.put("inf_codigo", rst.getString("inf_codigo"));
+                listDetalleCursos.add(hashMap);
+            }
+            return listDetalleCursos;
+
+        } catch (SQLException e) {
+            Logger.getLogger(Consultas.class.getName()).log(Logger.Level.FATAL, e);
+            throw new Exception("Error consultando la persona por Documento");
+        } finally {
+            if (pst != null) {
+                pst.close();
+            }
+            if (rst != null) {
+                rst.close();
+            }
+        }
+    }
+
     public List<CiaPersonas> getDataPersonByDetailsCourses(Connection con, long id_detalle) throws Exception {
         PreparedStatement pst = null;
         ResultSet rst = null;

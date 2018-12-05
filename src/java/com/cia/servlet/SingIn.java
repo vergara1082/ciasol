@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author jcarreno
+ * @author 
  */
 public class SingIn extends HttpServlet {
 

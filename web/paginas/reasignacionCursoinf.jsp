@@ -1,5 +1,5 @@
-<%@page import="com.cia.persistencia.CiaCursos"%>
 <%@page import="java.util.List"%>
+<%@page import="com.cia.persistencia.CiaCursos"%>
 <!DOCTYPE html>
 <html>
     <head>
@@ -123,10 +123,9 @@
                             <ul class="treeview-menu">
                                 <li><a href="<%=request.getContextPath()%>/asingInf"><i class="fa fa-circle-o"></i>registro en Cursos</a></li>
                                 <li class=""><a href="<%=request.getContextPath()%>/paginas/agendaDiaInf.jsp"><i class="fa fa-circle-o"></i> Agendar Curso</a></li>
-                                <li class="active"><a href="<%=request.getContextPath()%>/asistencias"><i class="fa fa-circle-o"></i> Registro de Asistencia</a></li>
+                                <li class=""><a href="<%=request.getContextPath()%>/asistencias"><i class="fa fa-circle-o"></i> Registro de Asistencia</a></li>
                                 <li class=""><a href="<%=request.getContextPath()%>/historicoCert"><i class="fa fa-circle-o"></i> Historico Certificado</a></li>
                                 <li class=""><a href="<%=request.getContextPath()%>/reasignacionCur"><i class="fa fa-circle-o"></i> Reasignación Curso</a></li>
-                                <li class=""><a href="<%=request.getContextPath()%>/actualizar"><i class="fa fa-circle-o"></i>Actualizar </a></li>
                             </ul>
                         </li>
                     </ul>
@@ -136,77 +135,125 @@
 
             <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
-                <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        Registro Asistencias
+                        Reasignar Curso
                         <small>Version 0.0.1</small>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-                        <li class="active">Registro Asistencias</li>
+                        <li class="active">Reasignar Curso</li>
                     </ol>
                 </section>
-
                 <!-- Main content -->
                 <section class="content">
+
                     <div id="app">
-                        <div class="row">
-                            <div class="col-sm-12">
-                                <form>
-                                    <div class="col-xs-4">
+                        <form>
+                            <div class="row">
 
-                                        <select id="tipoCurso" class="form-control col-sm-4">
-                                            <%
-                                                List<CiaCursos> ciaCursos = (List<CiaCursos>) request.getAttribute("listaCurso");
-                                                for (CiaCursos elem : ciaCursos) {
-                                            %> 
-                                            <option value="<%=elem.getCurId().toString()%>"><%= elem.getCiaHorarios().getHorTiempo()%> </option>
-                                            <%
-                                                }
-                                            %>
-                                        </select> </div>
-                                    <div class="col-xs-4">
-                                        <input type="button" value="consultar" class="btn btn-success ml-2" @click="consultarCurso"/>
+                                <div class="col-xs-2">
+                                    <label for ="cmbTipoDocumento">Tipo Documento</label>
+                                    <select id="cmbTipoDocumento" name="cmbTipoDocumento" class="form-control">
+                                        <option value="0" selected=""> Seleccione ... </option>
+                                        <option value="1" > Cédula</option>
+                                        <option value="2" > Nit </option>
+                                    </select>
+                                </div>
+                                <div class="col-xs-3">
+                                    <div class="form-group">
+                                        <label>Documento</label>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-clipboard"></i>
+                                                </div>
+                                                <input type="text" class="form-control" placeholder="Documento" name="txtDocumento" id="txtDocumento" >
+                                            </div>
+                                            <!-- /.input group -->
+                                        </div>
                                     </div>
-                                    <table class="table table-striped table-hover" v-if="items.length > 0">
-                                        <thead>
-                                            <tr>
-                                                <th>
-                                                    <label class="form-checkbox">
-                                                        <input type="checkbox" v-model="selectAll" @click="select">
-                                                        Seleccionar todo
-                                                        <i class="form-icon"></i>
-                                                    </label>
-                                                </th>
-                                                <th>Numero Documento</th>
-                                                <th>Nombres</th>
-                                                <th>Apellidos</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr v-for="i in items">
-                                                <td>
-                                                    <label class="form-checkbox">
-                                                        <input type="checkbox" :value="i" v-model="selected">
-                                                        <i class="form-icon"></i>
-                                                    </label>
-                                                </td>
-                                                <td>{{i.numero_documento}}</td>
-                                                <td>{{i.nombres_persona}}</td>
-                                                <td>{{i.apellido_persona}}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-
-                                    <input type="button" @click="guardarAsistencias" class="btn btn-success" value="procesar"  v-if="items.length > 0"/>
-                                </form>  
+                                </div>
+                                <div class="col-xs-3">
+                                    <label>&nbsp;</label>
+                                    <input type="button" value="consultar" class="btn btn-success form-control col-xs-4 ml-2" @click="consultarCurso"/>
+                                </div>
                             </div>
-                        </div>
+                            <div class="row">
+                                <table class="table table-striped table-hover col-xs-12" v-if="items.length > 0">
+                                    <thead>
+                                        <tr>
+                                            <th>
+                                                <label class="form-checkbox">
+                                                    <input type="checkbox" v-model="selectAll" @click="select">
+                                                    Seleccionar todo
+                                                    <i class="form-icon"></i>
+                                                </label>
+                                            </th>
+                                            <th>Numero Documento</th>
+                                            <th>Nombres</th>
+                                            <th>Apellidos</th>
+                                            <th>Numero Comparendo</th>
+                                            <th>Codigo Comparendo</th>
+                                            <th>Fecha</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="i in items">
+                                            <td>
+                                                <label class="form-checkbox">
+                                                    <input type="checkbox" :value="i" v-model="selected">
+                                                    <i class="form-icon"></i>
+                                                </label>
+                                            </td>
+                                            <td>{{i.numero_documento}}</td>
+                                            <td>{{i.nombres_persona}}</td>
+                                            <td>{{i.apellido_persona}}</td>
+                                            <td>{{i.inf_numero}}</td>
+                                            <td>{{i.inf_codigo}}</td>
+                                            <td>{{i.dcr_fecha}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="row"  v-if="items.length > 0">
+                                <div class="col-xs-4">
+                                    <label>Horario</label>
+                                    <select id="tipoCurso" class="form-control col-sm-4">
+                                        <option value ="0" selected>Seleccione ... </option>
+                                        <%
+                                            List<CiaCursos> ciaCursos = (List<CiaCursos>) request.getAttribute("listaCurso");
+                                            for (CiaCursos elem : ciaCursos) {
+                                        %> 
+                                        <option value="<%=elem.getCurId().toString()%>"><%= elem.getCiaHorarios().getHorTiempo()%> </option>
+                                        <%
+                                            }
+                                        %>
+                                    </select>
+                                </div>
+                                <div class="col-xs-3">
+                                    <div class="form-group">
+                                        <label>Fecha Curso</label>
+                                        <div class="form-group">
+                                            <div class="input-group">
+                                                <div class="input-group-addon">
+                                                    <i class="fa fa-calendar"></i>
+                                                </div>
+                                                <input type="text" class="form-control" placeholder="dd/MM/yyyy" name="txtFechaFac" id="txtFechaFac"  data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="">
+                                            </div>
+                                            <!-- /.input group -->
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="button" @click="guardarAsistencias" class="btn btn-success" value="procesar" />
+
+                            </div>
+                            <script>
+                                <%@include file="js/reasignacionCursos.js" %>
+                            </script>
+                        </form>  
                     </div>
-                    <script>
-                        <%@include file="js/asistencia.js" %>
-                    </script>
+
                 </section>
                 <!-- /.content -->
             </div>

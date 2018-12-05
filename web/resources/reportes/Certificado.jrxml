@@ -1,12 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Certificado" pageWidth="612" pageHeight="792" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="12b93fa3-497a-4f59-a7b2-5cc37909a6af">
-	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="PostgressSql.xml"/>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2018-12-04T18:14:53 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Certificado" pageWidth="612" pageHeight="1008" columnWidth="572" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="12b93fa3-497a-4f59-a7b2-5cc37909a6af">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w1" value="201"/>
 	<property name="com.jaspersoft.studio.data.sql.SQLQueryDesigner.sash.w2" value="791"/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w1" value="585"/>
 	<property name="com.jaspersoft.studio.property.dataset.dialog.DatasetDialog.sash.w2" value="401"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<parameter name="id_detalle_curso" class="java.lang.Long"/>
 	<queryString>
 		<![CDATA[Select 
@@ -91,46 +101,39 @@ when '12' then 'Diciembre' end ||' de '||to_char(now(),'yyyy') as mes_ltnow
 	<background>
 		<band splitType="Stretch"/>
 	</background>
-	<pageHeader>
-		<band height="109">
-			<rectangle>
-				<reportElement x="0" y="10" width="571" height="91" uuid="7c58ae85-8b17-437c-a84e-381eb1d9d72c"/>
-			</rectangle>
-			<image>
-				<reportElement x="3" y="15" width="193" height="81" uuid="5ff924fd-4830-4539-bb6b-451bd1c9f6d2"/>
-				<imageExpression><![CDATA["head.png"]]></imageExpression>
-			</image>
-			<staticText>
-				<reportElement x="170" y="12" width="400" height="91" uuid="b79441c9-bff2-480d-a669-adc14771db40"/>
-				<textElement textAlignment="Center" verticalAlignment="Top">
-					<font fontName="Arial" size="25"/>
-				</textElement>
-				<text><![CDATA[Instituto municipal de Tránsito y Transporte de soledad]]></text>
-			</staticText>
-		</band>
-	</pageHeader>
 	<detail>
-		<band height="600" splitType="Stretch">
+		<band height="968" splitType="Stretch">
 			<textField isBlankWhenNull="true">
-				<reportElement x="0" y="26" width="561" height="267" isPrintWhenDetailOverflows="true" uuid="9b01fe4d-cb87-46cc-b117-1dc9fe5f588a"/>
-				<textElement textAlignment="Justified" verticalAlignment="Middle">
-					<font size="14"/>
+				<reportElement x="2" y="135" width="561" height="185" isPrintWhenDetailOverflows="true" uuid="9b01fe4d-cb87-46cc-b117-1dc9fe5f588a"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Identificado(a) con cédula de ciudadania  numero "+ $F{documento}+"  el   en el horario "+$F{horario}+" de asistió al \"Curso educativo sobre Normas de tránsito\", con una duración de dos (2) hora, acogiéndose al Articulo 136 de la le 769 de 2002,  modificadó por el articulo 24 de la ley 1383 de 2010 y según concepto juridico expedido por el Ministerio  de trasnporte MT No 20111340233331 de fecha de 16 de mayo dae 2011 según orden de comparendo No "+ $F{comparendo}+" de fecha "+$F{fecha_comp}+"\n\n\n"+
 "Recibo de pago Curso Educativo  Asistencial No "+$F{factura}+" de fecha "+$F{f_factura}+" por valor de "+$F{valor_c}+" \n\n\n"
 +"Se expide en Soledad a los  "+$F{mes_ltnow}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="25" width="568" height="20" uuid="6e17fa81-8b72-4f36-a201-68145ee67fa7"/>
+				<reportElement x="-2" y="100" width="568" height="20" uuid="6e17fa81-8b72-4f36-a201-68145ee67fa7"/>
 				<textElement textAlignment="Center">
 					<font size="15" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{nombre_persona}]]></textFieldExpression>
 			</textField>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="170" y="304" width="240" height="81" uuid="5f007cf2-fe39-4f54-8f0f-47e2ea0ff02f"/>
+				<imageExpression><![CDATA["Firma.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="0" y="80" width="160" height="20" uuid="6711f40d-5b14-4154-ad30-b93565546137"/>
+				<textElement textAlignment="Left">
+					<font fontName="Arial" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Certicación N° "+$F{cert}]]></textFieldExpression>
+			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="420" width="571" height="110" uuid="ef17aff1-5d8e-4c90-a13d-3cc0e495ad41"/>
+				<reportElement x="0" y="356" width="571" height="110" uuid="ef17aff1-5d8e-4c90-a13d-3cc0e495ad41"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="14"/>
+					<font size="12"/>
 				</textElement>
 				<textFieldExpression><![CDATA["INSTRUCTOR \n"+
 "________________________________________________________\n"+
@@ -138,13 +141,72 @@ when '12' then 'Diciembre' end ||' de '||to_char(now(),'yyyy') as mes_ltnow
 +" Centro Comercial Nuestro Atlántico, piso 2 local 2005 \n"+
 "Soledad Confiable \n "+"www.transitosoledad.gov.co"]]></textFieldExpression>
 			</textField>
+			<rectangle>
+				<reportElement x="-3" y="6" width="571" height="63" uuid="7c58ae85-8b17-437c-a84e-381eb1d9d72c"/>
+			</rectangle>
+			<image>
+				<reportElement x="0" y="11" width="159" height="49" uuid="5ff924fd-4830-4539-bb6b-451bd1c9f6d2"/>
+				<imageExpression><![CDATA["head.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="167" y="10" width="400" height="52" uuid="b79441c9-bff2-480d-a669-adc14771db40"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16"/>
+				</textElement>
+				<text><![CDATA[INSTITUTO MUNICIPAL DE TRANSITO Y TRANSPORTE DE SOLEDAD]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="5" y="624" width="561" height="185" isPrintWhenDetailOverflows="true" uuid="7a6f58ad-9fd9-4d6c-a0ea-5fe961d5a309"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Identificado(a) con cédula de ciudadania  numero "+ $F{documento}+"  el   en el horario "+$F{horario}+" de asistió al \"Curso educativo sobre Normas de tránsito\", con una duración de dos (2) hora, acogiéndose al Articulo 136 de la le 769 de 2002,  modificadó por el articulo 24 de la ley 1383 de 2010 y según concepto juridico expedido por el Ministerio  de trasnporte MT No 20111340233331 de fecha de 16 de mayo dae 2011 según orden de comparendo No "+ $F{comparendo}+" de fecha "+$F{fecha_comp}+"\n\n\n"+
+"Recibo de pago Curso Educativo  Asistencial No "+$F{factura}+" de fecha "+$F{f_factura}+" por valor de "+$F{valor_c}+" \n\n\n"
++"Se expide en Soledad a los  "+$F{mes_ltnow}]]></textFieldExpression>
+			</textField>
 			<textField>
-				<reportElement x="0" y="2" width="160" height="20" uuid="6711f40d-5b14-4154-ad30-b93565546137"/>
+				<reportElement x="1" y="589" width="568" height="20" uuid="4891da1e-f411-4df9-8624-7ba164036005"/>
+				<textElement textAlignment="Center">
+					<font size="15" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nombre_persona}]]></textFieldExpression>
+			</textField>
+			<image hAlign="Center" vAlign="Middle">
+				<reportElement x="173" y="793" width="240" height="81" uuid="fb3e9276-ee8e-4cde-b7c7-32a24b0af241"/>
+				<imageExpression><![CDATA["Firma.png"]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="3" y="569" width="160" height="20" uuid="0b414426-15e9-41d4-ab56-a563fd3137d2"/>
 				<textElement textAlignment="Left">
 					<font fontName="Arial" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Certicación N° "+$F{cert}]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="3" y="845" width="571" height="110" uuid="c90600fd-e52e-4b99-a341-445e43e719cc"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["INSTRUCTOR \n"+
+"________________________________________________________\n"+
+"Dirección: calle 63 N° 13-71 Prolongación avenida Murillo,\n"
++" Centro Comercial Nuestro Atlántico, piso 2 local 2005 \n"+
+"Soledad Confiable \n "+"www.transitosoledad.gov.co"]]></textFieldExpression>
+			</textField>
+			<rectangle>
+				<reportElement x="0" y="495" width="571" height="63" uuid="b3b2854e-671a-4987-9e58-7346d5952a6b"/>
+			</rectangle>
+			<image>
+				<reportElement x="3" y="500" width="159" height="49" uuid="d2f80d08-6a25-4920-b0d1-2cb351b13642"/>
+				<imageExpression><![CDATA["head.png"]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="170" y="499" width="400" height="52" uuid="b718d1d4-e8f2-4010-8bf7-f087b8b8ae38"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Arial" size="16"/>
+				</textElement>
+				<text><![CDATA[INSTITUTO MUNICIPAL DE TRANSITO Y TRANSPORTE DE SOLEDAD]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>
