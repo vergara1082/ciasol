@@ -5,7 +5,7 @@ var app = new Vue({
         selected: [],
         renderDatos: false,
         detalle_curso_persona: {
-            horario: '',
+            //horario: '',
             tipo_documento: '',
             numero_documento: '',
             nombres_persona: '',
@@ -19,7 +19,7 @@ var app = new Vue({
 
         },
         detalle_curso_persona_current: {
-            horario: '',
+            //horario: '',
             tipo_documento: '',
             numero_documento: '',
             nombres_persona: '',
@@ -96,22 +96,12 @@ var app = new Vue({
                         if (response.data.length > 0) {
                             this.items = [];
                             for (var i = 0; response.data.length; i++) {
-                                this.detalle_curso_persona = {};
-                                this.detalle_curso_persona.numero_documento = response.data[i].per_documetos;
-                                this.detalle_curso_persona.tipo_documento = response.data[i].per_tipo_documento;
-                                this.detalle_curso_persona.numero_infracion = response.data[i].drc_id;
-                                this.detalle_curso_persona.nombres_persona = response.data[i].per_nombres;
-                                this.detalle_curso_persona.apellido_persona = response.data[i].per_apellidos;
-                                this.detalle_curso_persona.numero_factura = response.data[i].numero_factura;
-                                this.detalle_curso_persona.fecha_factura = response.data[i].fecha_factura;
-                                this.detalle_curso_persona.valor_curso = response.data[i].valor_curso;
-                                this.detalle_curso_persona.numero_comparendo = response.data[i].valor_curso;
-                                this.items.push(this.detalle_curso_persona);
+                                console.log(response);
                             }
 
                         } else {
                             this.items = [];
-                            alert("el tipo y el documento no fueron encontrado en la base de datos");
+                            console.log(response);
                         }
 
                     }).catch(error => {

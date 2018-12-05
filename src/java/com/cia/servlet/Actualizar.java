@@ -5,6 +5,7 @@
  */
 package com.cia.servlet;
 
+import com.cia.db.Actulizaciones;
 import com.cia.db.Conexion;
 import com.cia.db.Consultas;
 import com.cia.db.Inserciones;
@@ -53,16 +54,32 @@ public class Actualizar extends HttpServlet {
                 if (request.getParameter("action").equals("consultar")) {
                     buscarInfraciones(request, response);
                 } else if (request.getParameter("action").equals("update")) {
+                     response.setContentType("aplication/json");
                     String data = request.getParameter("tipo_curso");
                     JSONObject jSONObject = new JSONObject(data);
                     Conexion con = new Conexion();
-                    Consultas consultas = new Consultas();
+                    Actulizaciones actulizaciones = new Actulizaciones();
                     Inserciones in = new Inserciones();
                     con.conectar();
-                      
-                    
-                    System.out.println(jSONObject.get("numero_documento"));
+                    String numeroDocumento = jSONObject.get("numero_documento").toString();
+                    //String horario = jSONObject.get("horario").toString();
+                    String tipoDocumento = jSONObject.get("tipo_documento").toString();
+                    String nombre_persona = jSONObject.get("nombres_persona").toString();
+                    String apellido_persona = jSONObject.get("apellido_persona").toString();
+                    String numero_infracion = jSONObject.get("numero_infracion").toString();
+                    String numero_factura = jSONObject.get("numero_factura").toString();
+                    String fecha_factura = jSONObject.get("fecha_factura").toString();
+                    String valor_curso = jSONObject.get("valor_curso").toString();
+                    String numero_comparendo = jSONObject.get("numero_comparendo").toString();
+                    String fecha_comparendo = jSONObject.get("fecha_comparendo").toString();
+                    boolean personaupdate =actulizaciones.updatePersona(con.getCon(), nombre_persona, apellido_persona, tipoDocumento, numeroDocumento);
+                    boolean infracionesupdate = actulizaciones.updateInfraciones(con.getCon(), numero_factura, fecha_factura, valor_curso, numero_infracion, numero_comparendo, fecha_comparendo);
+                    if (infracionesupdate && personaupdate) {
+                        out.print("datos actualizados correctamente");
+                    }else{
+                         out.print("error contacte al aministrador del sistema");
                     }
+                }
 
                 } else {
                     request.getRequestDispatcher("paginas/actualizarInf.jsp").forward(request, response);
